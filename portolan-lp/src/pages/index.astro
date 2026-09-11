@@ -1,0 +1,177 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout>
+	<main>
+		<section class="hero">
+			<h1>Portolan</h1>
+			<p class="subtitle">AIが直接読める空間インフラ</p>
+			<p class="description">
+				地理空間データを「AIが直接読める形で」公開するための新しいオープン仕様。<br>
+				データは移動せず、出版者のストレージに置かれたまま、AIエージェントが直接参照できる。
+			</p>
+		</section>
+
+		<section class="features">
+			<h2>特徴</h2>
+			<div class="feature-grid">
+				<div class="feature-card">
+					<h3>3つの入り口</h3>
+					<p>collection.json（ソフトウェア用）、README.md（人間用）、AGENTS.md（AI用）</p>
+				</div>
+				<div class="feature-card">
+					<h3>データ主権の保護</h3>
+					<p>データは出版者のストレージに留まり、AIエージェントが必要な部分だけを読みに行く</p>
+				</div>
+				<div class="feature-card">
+					<h3>オープン仕様</h3>
+					<p>STAC、GeoParquet、COG、PMTilesなどの既存標準を組み合わせたベストプラクティス</p>
+				</div>
+			</div>
+		</section>
+
+		<section class="tutorial">
+			<h2>チュートリアル</h2>
+			<p>Portolanを「作って・公開するところまで」学べる入門シリーズ。</p>
+			<a href="/tutorial/" class="button">チュートリアルを見る</a>
+		</section>
+
+		<section class="featured">
+			<h2>特集</h2>
+			<p>Google Maps / OpenStreetMap とのデータ連携、共通プロトコルの用例などを紹介します。</p>
+			<div class="featured-links">
+				<a href="/feature/">特集コーナーを見る</a>
+			</div>
+		</section>
+
+		<section class="cta">
+			<h2>始めましょう</h2>
+			<p>Portolanの概念を広め、具体的な活用方法を模索しています。</p>
+			<a href="https://github.com/watanabe3tipapa/portolan-sandbox" class="button">GitHubで見る</a>
+		</section>
+	</main>
+</Layout>
+
+<style>
+	.hero {
+		text-align: center;
+		padding: 4rem 2rem;
+		background: linear-gradient(135deg, #1a2332 0%, #2d3a4f 100%);
+		color: white;
+	}
+
+	.hero h1 {
+		font-size: 3rem;
+		margin-bottom: 0.5rem;
+	}
+
+	.subtitle {
+		font-size: 1.5rem;
+		color: #b8c0cc;
+		margin-bottom: 1rem;
+	}
+
+	.description {
+		max-width: 600px;
+		margin: 0 auto;
+		line-height: 1.6;
+	}
+
+	.features {
+		padding: 4rem 2rem;
+		max-width: 1000px;
+		margin: 0 auto;
+	}
+
+	.features h2 {
+		text-align: center;
+		margin-bottom: 2rem;
+		font-size: 2rem;
+	}
+
+	.feature-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+		gap: 2rem;
+	}
+
+	.feature-card {
+		background: #f8f9fa;
+		padding: 2rem;
+		border-radius: 8px;
+		box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+	}
+
+	.feature-card h3 {
+		color: #c45c3e;
+		margin-bottom: 1rem;
+	}
+
+	.cta {
+		text-align: center;
+		padding: 4rem 2rem;
+		background: #f4f1ea;
+	}
+
+	.cta h2 {
+		margin-bottom: 1rem;
+	}
+
+	.tutorial {
+		text-align: center;
+		padding: 4rem 2rem;
+		background: #fffdf8;
+		border-top: 1px solid #e5ded1;
+		border-bottom: 1px solid #e5ded1;
+	}
+
+	.tutorial h2 {
+		margin-bottom: 1rem;
+		font-size: 2rem;
+	}
+
+	.tutorial p {
+		margin-bottom: 1rem;
+	}
+
+	.featured {
+		text-align: center;
+		padding: 4rem 2rem;
+		background: #faf7f0;
+	}
+
+	.featured h2 {
+		margin-bottom: 1rem;
+		font-size: 2rem;
+	}
+
+	.featured p {
+		margin-bottom: 1rem;
+	}
+
+	.featured-links a {
+		color: #c45c3e;
+		text-decoration: none;
+		font-weight: bold;
+	}
+
+	.featured-links a:hover {
+		text-decoration: underline;
+	}
+
+	.button {
+		display: inline-block;
+		background: #c45c3e;
+		color: white;
+		padding: 1rem 2rem;
+		text-decoration: none;
+		border-radius: 5px;
+		font-weight: bold;
+		margin-top: 1rem;
+	}
+
+	.button:hover {
+		background: #a84a32;
+	}
+</style>

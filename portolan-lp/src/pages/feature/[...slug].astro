@@ -1,0 +1,182 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+	const features = await getCollection('feature');
+	return features.map((entry) => ({
+		params: { slug: entry.id },
+		props: { entry },
+	}));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+
+const features = (await getCollection('feature')).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+const currentIndex = features.findIndex((f) => f.id === entry.id);
+const prev = features[currentIndex + 1];
+const next = features[currentIndex - 1];
+---
+
+<Layout>
+	<main class="article">
+		<nav class="breadcrumb">
+			<a href="/">&larr; ホーム</a>
+			<span>/</span>
+			<a href="/feature/">特集</a>
+		</nav>
+
+		<article>
+			<header>
+				<h1>{entry.data.title}</h1>
+				<p class="description">{entry.data.description}</p>
+				<p class="date">{entry.data.pubDate.toISOString().slice(0, 10)}</p>
+			</header>
+
+			<div class="content">
+				<Content />
+			</div>
+		</article>
+
+		<nav class="pager">
+			{next && <a href={`/feature/${next.id}/`} class="prev">&larr; {next.data.title}</a>}
+			{prev && <a href={`/feature/${prev.id}/`} class="next">{prev.data.title} &rarr;</a>}
+		</nav>
+	</main>
+</Layout>
+
+<style>
+	.article {
+		max-width: 760px;
+		margin: 0 auto;
+		padding: 2rem;
+		line-height: 1.8;
+	}
+
+	.breadcrumb {
+		font-size: 0.9rem;
+		margin-bottom: 2rem;
+	}
+
+	.breadcrumb a {
+		color: #c45c3e;
+		text-decoration: none;
+	}
+
+	.breadcrumb a:hover {
+		text-decoration: underline;
+	}
+
+	.breadcrumb span {
+		margin: 0 0.4rem;
+		color: #aaa;
+	}
+
+	header {
+		margin-bottom: 2.5rem;
+	}
+
+	h1 {
+		font-size: 2rem;
+		line-height: 1.4;
+		color: #1a2332;
+		margin-bottom: 0.5rem;
+	}
+
+	.description {
+		color: #5a6575;
+	}
+
+	.date {
+		color: #8a93a3;
+		font-size: 0.9rem;
+	}
+
+	.content :global(h2) {
+		font-size: 1.5rem;
+		margin-top: 2.5rem;
+		border-bottom: 1px solid #e5ded1;
+		padding-bottom: 0.4rem;
+	}
+
+	.content :global(h3) {
+		font-size: 1.2rem;
+		margin-top: 1.8rem;
+	}
+
+	.content :global(pre) {
+		background: #1a2332;
+		color: #e8e4dc;
+		padding: 1rem;
+		border-radius: 6px;
+		overflow-x: auto;
+		font-size: 0.9rem;
+	}
+
+	.content :global(code) {
+		font-family: "SFMono-Regular", Consolas, monospace;
+	}
+
+	.content :global(p code) {
+		background: #f0ece2;
+		padding: 0.15rem 0.35rem;
+		border-radius: 4px;
+		font-size: 0.9em;
+	}
+
+	.content :global(blockquote) {
+		border-left: 3px solid #c45c3e;
+		background: #f4f1ea;
+		padding: 0.8rem 1.2rem;
+		margin: 1.5rem 0;
+		border-radius: 0 6px 6px 0;
+	}
+
+	.content :global(table) {
+		width: 100%;
+		border-collapse: collapse;
+		margin: 1.5rem 0;
+	}
+
+	.content :global(th),
+	.content :global(td) {
+		border: 1px solid #e5ded1;
+		padding: 0.5rem 0.8rem;
+		text-align: left;
+		font-size: 0.95rem;
+	}
+
+	.content :global(th) {
+		background: #f4f1ea;
+	}
+
+	.content :global(a) {
+		color: #c45c3e;
+	}
+
+	.pager {
+		display: flex;
+		justify-content: space-between;
+		gap: 1rem;
+		margin-top: 3rem;
+		padding-top: 1.5rem;
+		border-top: 1px solid #e5ded1;
+	}
+
+	.pager a {
+		color: #c45c3e;
+		text-decoration: none;
+		max-width: 45%;
+		font-size: 0.95rem;
+	}
+
+	.pager a:hover {
+		text-decoration: underline;
+	}
+
+	.next {
+		margin-left: auto;
+		text-align: right;
+	}
+</style>

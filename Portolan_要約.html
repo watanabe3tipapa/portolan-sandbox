@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portolan 要約 — AIが直接読める空間インフラ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;600;700&family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f4f1ea;
+  --surface: #fffdf8;
+  --ink: #1a2332;
+  --muted: #5a6575;
+  --accent: #c45c3e;
+  --accent-weak: color-mix(in oklab, var(--accent) 10%, var(--surface));
+  --line: color-mix(in oklab, var(--ink) 10%, transparent);
+  --step--1: clamp(0.85rem, 0.82rem + 0.15vw, 0.95rem);
+  --step-0: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
+  --step-1: clamp(1.15rem, 1.05rem + 0.5vw, 1.4rem);
+  --step-2: clamp(1.5rem, 1.25rem + 1.2vw, 2.2rem);
+  --step-3: clamp(2rem, 1.5rem + 2.5vw, 3.2rem);
+  --space: clamp(1.25rem, 1rem + 1.2vw, 2rem);
+  --radius: 10px;
+  --shadow: 0 1px 2px rgba(0,0,0,0.04), 0 10px 30px -10px rgba(0,0,0,0.12);
+}
+
+* { box-sizing: border-box; margin: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: "Noto Sans JP", "Hiragino Sans", "Yu Gothic", "Noto Sans JP", sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  line-height: 1.85;
+  font-size: var(--step-0);
+}
+
+/* Hero */
+header {
+  position: relative;
+  background: linear-gradient(165deg, #1a2332 0%, #2d3a4f 60%, #3d4f68 100%);
+  color: #e8e4dc;
+  padding: calc(var(--space) * 3) var(--space) calc(var(--space) * 2.5);
+  overflow: hidden;
+}
+
+header::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 20% 80%, rgba(196,92,62,0.08) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(196,92,62,0.05) 0%, transparent 40%);
+  pointer-events: none;
+}
+
+/* Compass rose decoration */
+.compass {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  width: 80px;
+  height: 80px;
+  opacity: 0.15;
+}
+@media (min-width: 640px) {
+  .compass { width: 120px; height: 120px; top: 2rem; right: 2rem; }
+}
+
+.hero-inner {
+  position: relative;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.eyebrow {
+  display: inline-block;
+  font-size: var(--step--1);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+  text-transform: uppercase;
+  margin-bottom: 0.75rem;
+}
+
+h1 {
+  font-family: "Noto Serif JP", "Hiragino Mincho ProN", "Yu Mincho", "Noto Serif JP", serif;
+  font-size: var(--step-3);
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  color: #fff;
+  margin-bottom: 1rem;
+}
+
+.lead {
+  font-size: var(--step-1);
+  font-weight: 300;
+  line-height: 1.7;
+  color: #b8c0cc;
+  max-width: 58ch;
+}
+
+/* Main */
+main {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: calc(var(--space) * 2) var(--space);
+}
+
+section {
+  margin-bottom: calc(var(--space) * 2.5);
+}
+
+h2 {
+  font-family: "Noto Serif JP", "Hiragino Mincho ProN", "Yu Mincho", "Noto Serif JP", serif;
+  font-size: var(--step-2);
+  font-weight: 600;
+  line-height: 1.35;
+  margin-bottom: 1rem;
+  color: var(--ink);
+}
+
+h2 .num {
+  display: inline-block;
+  font-family: "Noto Sans JP", sans-serif;
+  font-size: 0.55em;
+  font-weight: 700;
+  color: var(--accent);
+  vertical-align: top;
+  margin-right: 0.3em;
+  letter-spacing: 0;
+}
+
+p {
+  margin-bottom: 1.1em;
+  max-width: 68ch;
+}
+
+/* Pull quote */
+.pullquote {
+  background: var(--surface);
+  border-left: 3px solid var(--accent);
+  padding: 1.25rem 1.5rem;
+  margin: 1.5rem 0;
+  border-radius: 0 var(--radius) var(--radius) 0;
+  box-shadow: var(--shadow);
+  font-family: "Noto Serif JP", serif;
+  font-size: var(--step-1);
+  line-height: 1.65;
+  color: var(--ink);
+}
+
+/* Three docs cards */
+.doc-grid {
+  display: grid;
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+.doc-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  box-shadow: var(--shadow);
+}
+
+.doc-card h3 {
+  font-size: var(--step--1);
+  font-weight: 700;
+  color: var(--accent);
+  margin-bottom: 0.4rem;
+  letter-spacing: 0.02em;
+}
+
+.doc-card p {
+  font-size: var(--step--1);
+  color: var(--muted);
+  margin-bottom: 0;
+  line-height: 1.7;
+}
+
+/* Lists */
+ul {
+  padding-left: 1.5em;
+  margin-bottom: 1.1em;
+}
+
+li {
+  margin-bottom: 0.5em;
+}
+
+/* Source */
+.source {
+  margin-top: calc(var(--space) * 2);
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--line);
+  font-size: var(--step--1);
+  color: var(--muted);
+}
+
+.source a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.source a:hover {
+  text-decoration: underline;
+}
+
+/* Print */
+@media print {
+  body { background: #fff; }
+  header { background: #1a2332 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .compass { display: none; }
+}
+
+@page { size: A4; margin: 18mm; }
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <svg class="compass" viewBox="0 0 100 100" aria-hidden="true">
+    <circle cx="50" cy="50" r="48" fill="none" stroke="currentColor" stroke-width="1"/>
+    <circle cx="50" cy="50" r="36" fill="none" stroke="currentColor" stroke-width="0.5"/>
+    <line x1="50" y1="2" x2="50" y2="98" stroke="currentColor" stroke-width="0.8"/>
+    <line x1="2" y1="50" x2="98" y2="50" stroke="currentColor" stroke-width="0.8"/>
+    <polygon points="50,10 54,46 50,50 46,46" fill="currentColor"/>
+    <polygon points="50,90 54,54 50,50 46,54" fill="none" stroke="currentColor" stroke-width="0.8"/>
+    <polygon points="10,50 46,54 50,50 46,46" fill="none" stroke="currentColor" stroke-width="0.8"/>
+    <polygon points="90,50 54,54 50,50 54,46" fill="none" stroke="currentColor" stroke-width="0.8"/>
+  </svg>
+  <div class="hero-inner">
+    <span class="eyebrow">GeoAI 第16回 要約</span>
+    <h1>「地図データを配る」時代の終わり<br>AIが直接読める空間インフラ「Portolan」とは</h1>
+    <p class="lead">地理空間データを「AIが直接読める形で」公開するための新しいオープン仕様。データは移動せず、出版者のストレージに置かれたまま、AIエージェントが直接参照できる。</p>
+  </div>
+</header>
+
+<main>
+
+<section>
+  <h2><span class="num">01</span>ヘルシンキのデモが示した未来</h2>
+  <p>2026年6月、OGC Connect Helsinkiで実証デモが披露された。データセンター用地の適性評価を求められたAIエージェントが、送電網アクセス・地形・洪水リスク・保護区域・冷却水源などの複数の問いを順番に処理し、数十秒後に出典付きの評価結果を出力した。</p>
+  <p>重要なのは、データがどこかに集約されていたわけではない点。エージェントはフィンランド国土調査院やコペルニクスプログラムなど、各機関が管理するストレージに置かれたデータを<strong>直接参照</strong>していた。このデモを可能にしたのが、Portolanである。</p>
+</section>
+
+<section>
+  <h2><span class="num">02</span>STACの次に来るもの</h2>
+  <p>STAC（SpatioTemporal Asset Catalog）は衛星データに統一されたラベルを付与し、異なる機関のデータを同じ方法で検索・取得できるようにする標準規格だ。しかし「データが見つかった後、本当に使いやすいか」という問いは残る。</p>
+  <p>現在の地理空間データはポータルサイトや専用API、FTPサーバーで配布されており、利用者は毎回ダウンロードと前処理を行う必要がある。このフローはAIエージェントにとって大きな障壁となる。独自の認証方式、APIドキュメント、ファイル形式、座標系の違いを毎回解釈しなければならない状況では、「自律的にデータを調達して分析する」ビジョンは実現しない。</p>
+</section>
+
+<section>
+  <h2><span class="num">03</span>Portolanとは何か</h2>
+  <p>Portolanは2026年9月に公開されたオープン仕様。地理空間データを「AIが直接読める形で、出版者が管理するストレージに置く」ためのルール集である。核心はシンプルだ。</p>
+  <div class="pullquote">
+    データをサーバーに「閉じ込めない」。クラウド上のファイルとして「開いた状態で」保存する。そしてそのファイルを、人間も、ソフトウェアも、AIエージェントも、それぞれに合ったやり方で読めるようにする。
+  </div>
+  <p>Portolanは新しいファイル形式ではない。STAC、GeoParquet、COG、PMTiles、Apache Icebergといった既存の標準を組み合わせたベストプラクティスである。データはオブジェクトストレージに置かれ、出版者はサーバーを運営する必要がない。レジストリにはOverture Maps Foundation、各国土地理院、各市など20のカタログが登録済みだ。</p>
+</section>
+
+<section>
+  <h2><span class="num">04</span>3つの「入り口」という設計思想</h2>
+  <p>Portolanの最も独創的な点は、ひとつのデータコレクションに3種類のドキュメントを用意することを求めている点だ。</p>
+  <div class="doc-grid">
+    <div class="doc-card">
+      <h3>collection.json</h3>
+      <p>ソフトウェアが読む。メタデータ、スキーマ、データへのリンクが機械可読な形式で記述されている。</p>
+    </div>
+    <div class="doc-card">
+      <h3>README.md</h3>
+      <p>人間が読む。データの意味、ライセンス、利用上の注意事項。</p>
+    </div>
+    <div class="doc-card">
+      <h3>AGENTS.md</h3>
+      <p>AIエージェントが読む。安定したクエリパス、テスト済みのクエリパターン、座標系の違い、既知の制限事項、ライセンス条件。</p>
+    </div>
+  </div>
+  <p>特に「AGENTS.md」が革新的だ。データ出版者が「このデータをAIに使わせるときのコツ」を前に書き残す場所である。「このカラムで空間フィルタをかけると速い」「この座標系はEPSG:4326に変換してから使うこと」といった、GIS専門家の知見をエージェントが事前に読める形で渡す。同じデータに、ソフトウェア用・人間用・AI用の3つの入り口があるという設計哲学は、根本的に新しい。</p>
+</section>
+
+<section>
+  <h2><span class="num">05</span>データ主権が「設計要件」になる</h2>
+  <p>従来、AIで地理空間データを使いたい場合、データを特定のクラウドプラットフォームに集約することが多かった。しかし政府機関にとって「データがどこに行くか分からない」状態は受け入れがたい。</p>
+  <p>Portolanではデータは出版者のストレージに留まり、AIエージェントが必要な部分だけを読みに行く。さらにストレージ・エンジン・AIモデル・メタデータ標準の各レイヤーが独立して選択できるため、特定ベンダーに依存しないインフラを実現している。</p>
+</section>
+
+<section>
+  <h2><span class="num">06</span>「ポルトラン図」という名前の由来</h2>
+  <p>ポルトラン図（Portolan chart）は、13〜17世紀に地中海・黒海を中心に使われた航海図である。羅針盤から放射状に伸びる方位線が特徴的だ。それ以前の地図が宗教的・政治的な世界観を反映した「鑑賞用」のものだったのに対し、ポルトラン図は船乗りの実測知識に基づき、「正確で使えるかどうか」を優先した実用主義の産物だった。</p>
+  <p>オープン仕様としてのPortolanも、この精神を受け継ぐ。理想を掲げるだけでなく実際に動く仕様を定め、多くの手によって作られ共有される。どのツールを使っていても読める—「AIが実際に使う地図データ基盤」である。</p>
+</section>
+
+<section>
+  <h2><span class="num">07</span>まとめ：データ配布の思想が変わるとき</h2>
+  <p>これまでの地理空間データ配布は、出版者がサーバーを運営し、ポータルを作り、利用者が毎回ダウンロードと前処理を行う形で成り立っていた。Portolanはこの構造を逆転させる。</p>
+  <ul>
+    <li>出版者はデータをファイルとして置き、3種類のドキュメントで「使い方」を伝える</li>
+    <li>利用者は自分のエンジンで直接読む</li>
+    <li>AIエージェントはAGENTS.mdを参照して「失敗しない」クエリを発行する</li>
+    <li>レジストリを通じて世界中の信頼できるデータを横断的に参照できる</li>
+    <li>それでもデータはどこにも動かない</li>
+  </ul>
+  <p>これは地理空間データがどのように作られ、管理され、使われるかについての設計哲学の転換である。Portolanのレジストリに登録されるカタログが増えていくことで、この新しいパラダイムは世界中に広がっていく可能性を持っている。</p>
+</section>
+
+<div class="source">
+  原文：Pacific Spatial Solutions（PSS）「【GeoAI】第16回：「地図データを配る」時代の終わり—AIが直接読める空間インフラ「Portolan」とは」<br>
+  <a href="https://note.com/pacificspatial/n/nf8466fae24dd" target="_blank">https://note.com/pacificspatial/n/nf8466fae24dd</a>
+</div>
+
+</main>
+
+</body>
+</html>
