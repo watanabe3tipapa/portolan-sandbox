@@ -86,6 +86,7 @@ portolan-sandbox/                    ← GitHub Pages 公開元(リポジトリ)
 | 2 | 02-agents-md | AGENTS.md — AI に使い方を伝える |
 | 3 | 03-deploy-github-pages | Deploy — GitHub Pages で公開 |
 | 4 | 04-google-colab | Google Colaboratory — パーソナル・開発サーバー |
+| 5 | 05-local-llm | Local LLM — マウントしたローカル LLM でデータ解析する |
 
 frontmatter: `title` / `description` / `order`(number) / `pubDate`(date)
 
@@ -97,6 +98,7 @@ frontmatter: `title` / `description` / `order`(number) / `pubDate`(date)
 | gmaps-osm-interop | Google Maps × OpenStreetMap — データ連携 |
 | common-protocols | 共通プロトコルの用例 — STAC・GeoParquet・PMTiles |
 | helsinki-demo | ケーススタディ — OGC Connect Helsinki デモ |
+| google-github-workflow | ケーススタディ — Google アカウント × GitHub アカウントの両立ワークフロー |
 
 frontmatter: `title` / `description` / `pubDate`(date)
 
@@ -112,6 +114,11 @@ frontmatter: `title` / `description` / `pubDate`(date)
 | M6 | 特集コーナー | feature コレクション + 記事 4 本 + 一覧・個別ページ |
 | M7 | リモート公開 | GitHub リポジトリ作成 + GH Pages に LP 公開(公開 URL で 200 確認) |
 | M8 | LICENSE 決定(MIT) | LICENSE 追加 + README ライセンス節・バッジへ反映 |
+| M9 | 記事内容の拡充 | tutorial 5 本 → 全記事に具体例・コード・表を追加(+622行) |
+| M10 | Colab MCP server 検証 | read/convert/validate の4ツール実装・公開デモコレクションで動作確認(HTTP 200) |
+| M11 | Colab MCP 次段階 | deploy_to_github_pages / write_to_drive 追加、Pages へのMCP経由デプロイを実証 |
+| M12 | ローカル LLM 用例 | Ollama を Drive にマウントして解析するツール4種 + 実機検証(ask/geo_analyze) |
+| M13 | 両アカウント WF 記事 | tutorial 05-local-llm + feature google-github-workflow の新規追加 |
 
 ## 実装メモ
 
@@ -220,10 +227,8 @@ AI エージェント(任意の MCP クライアント)
 - **ポイント**: `OLLAMA_MODELS` に Google Drive パスを指定して servers 起動することで、モデルを**Drive に永続マウント**し、ランタイム再起動後も再利用できる
 - **Colab ノートブック**にセクション 8〜10 追加(Ollama インストール → Drive 永続化 → 起動 → モデル pull → 空間解析)
 - **状態**: ツール読み込み・構文確認済み。モデル pull の実機検証は中断(Model サイズ約 500MB のため)。TODO: 後日まとめてチュートリアル化する際に再検証する
+- **実機検証(2026-09-11、追記)**: `ollama pull qwen2.5:0.5b` 成功 → ローカルで `ollama_status` が `model_present: true` → `ask_local_llm`(CRS 質問に UTM と回答)／`geo_analyze_local_llm`(公開 poi.parquet を読んで "The dataset contains information about various locations." と回答)を確認。4 ツールすべて正常動作
 
 ## 今後やること(仮)
 
-- **Colab MCP server の次段階**: 認証(Google アカウント)・Drive アクセス・GitHub Pages へのデプロイツールを server に追加し、Colab 単体で完結する構成を検証(構想節と連動) ✅ 追加済み(→ 検証記録の続きを参照)
-- **ローカル LLM のチュートリアル化**: Ollama の Drive マウント + `geo_analyze_local_llm` の操作手順を tutorial 記事としてまとめる(モデル pull の実機検証含む)
-- 両アカウント保有時のワークフローの DP / feature 記事への反映
-- tutorial / feature 記事のさらなる内容充実と更新
+- 上記の各マイルストーン(M9〜M13)は完了。新規の検証テーマが出た時点で随時追加する
