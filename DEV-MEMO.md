@@ -125,4 +125,4 @@ frontmatter: `title` / `description` / `pubDate`(date)
 ## 今後やること(仮)
 
 - 「Google アカウントだけで完結する認証・デプロイ」検証(Colab / Colab MCP server、本ファイル「構想」節と連動)
-- tutorial 記事の内容充実と、特集記事の更新
+- tutorial / feature 記事のさらなる内容充実と更新
