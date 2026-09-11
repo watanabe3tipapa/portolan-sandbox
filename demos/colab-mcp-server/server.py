@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import urllib.request
+from io import BytesIO
 from pathlib import Path
 from typing import Literal
 
@@ -9,6 +10,14 @@ import geopandas as gpd
 from fastmcp import FastMCP
 
 mcp = FastMCP("portolan-colab-server")
+
+
+def _load_parquet(source: str) -> gpd.GeoDataFrame:
+    """Load a GeoParquet from a local path or a public HTTP(S) URL."""
+    if source.startswith(("http://", "https://")):
+        with urllib.request.urlopen(source) as res:
+            return gpd.read_parquet(BytesIO(res.read()))
+    return gpd.read_parquet(source)
 
 
 @mcp.tool
@@ -48,7 +57,7 @@ def read_geoparquet(
         crs_out: Target CRS to reproject to (default EPSG:4326).
         limit: Max number of features to include in the summary.
     """
-    gdf = gpd.read_parquet(source)
+    gdf = _load_parquet(source)
     if gdf.crs is not None:
         before = gdf.crs.to_epsg() if gdf.crs.to_epsg() else str(gdf.crs)
         gdf = gdf.to_crs(crs_out)
@@ -84,11 +93,11 @@ def convert_geoparquet(
     """Convert a GeoParquet file to another CRS and write it out.
 
     Args:
-        source: Local path to input .parquet.
+        source: Local path or public URL to input .parquet.
         target: Local path to write converted .parquet.
         crs_out: Target CRS, e.g. EPSG:4326.
     """
-    gdf = gpd.read_parquet(source)
+    gdf = _load_parquet(source)
     before = gdf.crs.to_epsg() if gdf.crs is not None else None
     if gdf.crs is not None:
         gdf = gdf.to_crs(crs_out)

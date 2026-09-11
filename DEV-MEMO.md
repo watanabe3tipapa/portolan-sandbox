@@ -122,7 +122,28 @@ frontmatter: `title` / `description` / `pubDate`(date)
 - デプロイ経路: GitHub Actions(`.github/workflows/deploy.yml`)の build → deploy-pages。main への push で自動デプロイ
 - Pages 設定: Source を **GitHub Actions**(build_type: workflow)に設定済み
 
+## 検証記録: Colab MCP server(`demos/colab-mcp-server/`)
+
+「Google アカウントだけで完結する認証・デプロイ」のうち、まず **Colab MCP server(パーソナル・開発サーバー)としての基盤**を検証。
+
+- `uv init` した Python プロジェクト `portolan-mcp`(fastmcp 4.0.3 + geopandas + pyarrow)
+- ツール実装(`server.py`): `read_collection` / `read_geoparquet` / `convert_geoparquet` / `validate_collection`
+- **検証結果(2026-09-11)**:
+  - `validate_collection(VALID)` → `valid: true`(fixtures/collection.json、7 フィールド正常)
+  - `read_collection(URL)` → https://watanabe3tipapa.github.io/portolan-sandbox/demo-collection/collection.json を読み、id/ライセンス/bbox/リンクを返すことに成功
+  - `read_geoparquet(URL)` → 公開中の demo-collection/data/poi.parquet(3857)を 4326 に変換して件数・CRS・サンプルを返すことに成功
+  - `convert_geoparquet(ローカル)` → 3857→4326 変換後のファイル書き出しに成功(CRS を pyarrow で読み検証)
+  - MCP server は HTTP トランスポート(`http://127.0.0.1:8000/mcp`)で起動確認
+- **技術メモ**(検証で判明):
+  - `geopandas.read_parquet()` は URL 直接読み込み不可 → `urllib` でバイト列取得 → `BytesIO` に包む
+  - fastmcp 4.x では `mcp._tool_manager` 等の内部属性は非公開。検証は関数を直接 import して実行
+  - `uv init` を誤って `portolan-lp/`(Astro プロジェクト)内で実行しないこと。デモは `demos/<name>/` に分離
+  - Git 管理: `demos/colab-mcp-server/.gitignore` で `.venv/` `__pycache__/` を除外。`uv.lock` は管理対象
+- **デモコレクション**(公開 URL): https://watanabe3tipapa.github.io/portolan-sandbox/demo-collection/collection.json
+  - 実体は `portolan-lp/public/demo-collection/`(Astro の `public/` に置くと `dist/` にコピーされ Pages で配信される)
+  - サンプルデータ(poi.parquet): 東京 5 地点の POI(EPSG:3857 で保存 → AGENTS.md の「3857 は変換が必要」の例題に活用)
+
 ## 今後やること(仮)
 
-- 「Google アカウントだけで完結する認証・デプロイ」検証(Colab / Colab MCP server、本ファイル「構想」節と連動)
+- **Colab MCP server の次段階**: 認証(Google アカウント)・Drive アクセス・GitHub Pages へのデプロイツールを server に追加し、Colab 単体で完結する構成を検証(構想節と連動)
 - tutorial / feature 記事のさらなる内容充実と更新
