@@ -22,9 +22,9 @@ const next = tutorials[currentIndex + 1];
 <Layout>
 	<main class="article">
 		<nav class="breadcrumb">
-			<a href="/">&larr; ホーム</a>
+			<a href={`${import.meta.env.BASE_URL}`}>&larr; ホーム</a>
 			<span>/</span>
-			<a href="/tutorial/">チュートリアル</a>
+			<a href={`${import.meta.env.BASE_URL}tutorial/`}>チュートリアル</a>
 		</nav>
 
 		<article>
@@ -39,8 +39,8 @@ const next = tutorials[currentIndex + 1];
 		</article>
 
 		<nav class="pager">
-			{prev && <a href={`/tutorial/${prev.id}/`} class="prev">&larr; {prev.data.title}</a>}
-			{next && <a href={`/tutorial/${next.id}/`} class="next">{next.data.title} &rarr;</a>}
+			{prev && <a href={`${import.meta.env.BASE_URL}tutorial/${prev.id}/`} class="prev">&larr; {prev.data.title}</a>}
+			{next && <a href={`${import.meta.env.BASE_URL}tutorial/${next.id}/`} class="next">{next.data.title} &rarr;</a>}
 		</nav>
 	</main>
 </Layout>

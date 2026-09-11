@@ -103,6 +103,6 @@ GeoParquet（公開 URL または Drive）
 ## 次のステップ
 
 ローカル LLM は Portolan と組み合わせると、**データ主権を守りながら** AI 解析できます。
-次の関心ごとに応じて、特集記事「[ケーススタディ — OGC Connect Helsinki](/feature/helsinki-demo/)」や「[共通プロトコルの用例](/feature/common-protocols/)」をご覧ください。
+次の関心ごとに応じて、特集記事「[ケーススタディ — OGC Connect Helsinki](../../feature/helsinki-demo/)」や「[共通プロトコルの用例](../../feature/common-protocols/)」をご覧ください。
 
 - [チュートリアル一覧に戻る](../)

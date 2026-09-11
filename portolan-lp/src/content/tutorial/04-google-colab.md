@@ -72,7 +72,7 @@ AI エージェント ⇄ MCP プロトコル ⇄ Colab (MCP server)
                                      └─ デプロイ（GitHub API 等）
 ```
 
-詳しくは特集記事「[Colab MCP server に期待できる機能](/feature/colab-mcp-server/)」を参照してください。
+詳しくは特集記事「[Colab MCP server に期待できる機能](../../feature/colab-mcp-server/)」を参照してください。
 
 ## 実践イメージ
 
@@ -97,7 +97,7 @@ df.head()
 - MCP server としての公開方法はプロトタイプ段階
 - 認証・デプロイを「Google アカウントだけで」完結させるための仕組み化はこれから
 
-次のステップは、特集記事の「[Colab MCP server に期待できる機能](/feature/colab-mcp-server/)」をご覧ください。
+次のステップは、特集記事の「[Colab MCP server に期待できる機能](../../feature/colab-mcp-server/)」をご覧ください。
 
 ## このチュートリアルは途中です
 

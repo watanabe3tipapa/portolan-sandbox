@@ -22,9 +22,9 @@ const next = features[currentIndex - 1];
 <Layout>
 	<main class="article">
 		<nav class="breadcrumb">
-			<a href="/">&larr; ホーム</a>
+			<a href={`${import.meta.env.BASE_URL}`}>&larr; ホーム</a>
 			<span>/</span>
-			<a href="/feature/">特集</a>
+			<a href={`${import.meta.env.BASE_URL}feature/`}>特集</a>
 		</nav>
 
 		<article>
@@ -40,8 +40,8 @@ const next = features[currentIndex - 1];
 		</article>
 
 		<nav class="pager">
-			{next && <a href={`/feature/${next.id}/`} class="prev">&larr; {next.data.title}</a>}
-			{prev && <a href={`/feature/${prev.id}/`} class="next">{prev.data.title} &rarr;</a>}
+			{next && <a href={`${import.meta.env.BASE_URL}feature/${next.id}/`} class="prev">&larr; {next.data.title}</a>}
+			{prev && <a href={`${import.meta.env.BASE_URL}feature/${prev.id}/`} class="next">{prev.data.title} &rarr;</a>}
 		</nav>
 	</main>
 </Layout>

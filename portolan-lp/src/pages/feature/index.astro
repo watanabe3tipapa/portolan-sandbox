@@ -17,14 +17,14 @@ const heroLead = 'Google Maps / OpenStreetMap とのデータ連携や、共通�
 		<section class="list">
 			{
 				features.map((f) => (
-					<a href={`/feature/${f.id}/`}>
+					<a href={`${import.meta.env.BASE_URL}feature/${f.id}/`}>
 						<h2>{f.data.title}</h2>
 						<p>{f.data.description}</p>
 						<span class="date">{f.data.pubDate.toISOString().slice(0, 10)}</span>
 					</a>
 				))
 			}
-			<a href="/" class="back">&larr; トップへ戻る</a>
+			<a href={`${import.meta.env.BASE_URL}`} class="back">&larr; トップへ戻る</a>
 		</section>
 	</main>
 </Layout>

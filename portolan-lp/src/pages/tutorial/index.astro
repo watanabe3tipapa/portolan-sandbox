@@ -19,7 +19,7 @@ const heroLead = 'Portolan を「作って・公開するところまで」学�
 				{
 					tutorials.map((t) => (
 						<li>
-							<a href={`/tutorial/${t.id}/`}>
+							<a href={`${import.meta.env.BASE_URL}tutorial/${t.id}/`}>
 								<h2>{t.data.title}</h2>
 								<p>{t.data.description}</p>
 							</a>
@@ -27,7 +27,7 @@ const heroLead = 'Portolan を「作って・公開するところまで」学�
 					))
 				}
 			</ol>
-			<a href="/" class="back">&larr; トップへ戻る</a>
+			<a href={`${import.meta.env.BASE_URL}`} class="back">&larr; トップへ戻る</a>
 		</section>
 	</main>
 </Layout>

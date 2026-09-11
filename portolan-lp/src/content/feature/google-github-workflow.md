@@ -97,4 +97,4 @@ print(read_collection("https://<username>.github.io/<repo>/demo-collection/colle
 
 両アカウントの持ち主にとって、GitHub Pages は「公開・配信」の主役であり、Colab は「データ準備・検証・プライベート解析」の主役です。この二つを接続しているのが Portolan の考え方——**データは take down せず、開いた状態で公開しておく**——です。
 
-Colab MCP server を使えば、この両者の橋渡し（GitHub Pages へのデプロイ含む）も、ローカル .git 環境がなくても実行できます。詳細は「[Colab MCP server に期待できる機能](/feature/colab-mcp-server/)」を参照してください。
+Colab MCP server を使えば、この両者の橋渡し（GitHub Pages へのデプロイ含む）も、ローカル .git 環境がなくても実行できます。詳細は「[Colab MCP server に期待できる機能](../colab-mcp-server/)」を参照してください。
