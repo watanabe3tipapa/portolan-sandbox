@@ -5,6 +5,7 @@ import { getCollection } from 'astro:content';
 const tutorials = (await getCollection('tutorial')).sort((a, b) => a.data.order - b.data.order);
 const heroTitle = 'チュートリアル';
 const heroLead = 'Portolan を「作って・公開するところまで」学べる入門シリーズです。';
+const colors = ['mint', 'pink', 'lemon', 'sky'];
 ---
 
 <Layout>
@@ -15,19 +16,17 @@ const heroLead = 'Portolan を「作って・公開するところまで」学�
 		</section>
 
 		<section class="list">
-			<ol>
-				{
-					tutorials.map((t) => (
-						<li>
-							<a href={`${import.meta.env.BASE_URL}tutorial/${t.id}/`}>
-								<h2>{t.data.title}</h2>
-								<p>{t.data.description}</p>
-							</a>
-						</li>
-					))
-				}
-			</ol>
-			<a href={`${import.meta.env.BASE_URL}`} class="back">&larr; トップへ戻る</a>
+			{
+				tutorials.map((t, i) => (
+					<a
+						href={`${import.meta.env.BASE_URL}tutorial/${t.id}/`}
+						class={`card ${colors[i % colors.length]}`}>
+						<h2>{t.data.title}</h2>
+						<p>{t.data.description}</p>
+					</a>
+				))
+			}
+			<a href={`${import.meta.env.BASE_URL}`} class="button back">&larr; トップへ戻る</a>
 		</section>
 	</main>
 </Layout>
@@ -36,17 +35,24 @@ const heroLead = 'Portolan を「作って・公開するところまで」学�
 	.hero {
 		text-align: center;
 		padding: 3rem 2rem;
-		background: linear-gradient(135deg, #1a2332 0%, #2d3a4f 100%);
-		color: white;
+		background: var(--nb-pink);
+		border-bottom: var(--nb-border);
 	}
 
 	.hero h1 {
-		font-size: 2.5rem;
-		margin-bottom: 0.5rem;
+		font-size: 2.8rem;
+		margin: 0 0 0.5rem;
+		display: inline-block;
+		padding: 0.25em 0.75em;
+		background: var(--nb-bg);
+		border: var(--nb-border);
+		box-shadow: var(--nb-shadow);
 	}
 
 	.lead {
-		color: #b8c0cc;
+		font-weight: 700;
+		max-width: 640px;
+		margin: 0 auto;
 	}
 
 	.list {
@@ -58,50 +64,69 @@ const heroLead = 'Portolan を「作って・公開するところまで」学�
 		padding: 0 2rem;
 	}
 
-	ol {
-		list-style: none;
-		padding: 0;
-		margin: 0;
-		display: contents;
-	}
-
-	li a {
+	.card {
 		display: block;
 		text-decoration: none;
-		color: inherit;
-		background: #fffdf8;
-		border: 1px solid #e5ded1;
-		border-radius: 8px;
+		border: var(--nb-border);
+		box-shadow: var(--nb-shadow);
 		padding: 1.5rem;
-		box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-		transition: box-shadow 0.2s ease, transform 0.2s ease;
+		transition:
+			transform 0.1s ease,
+			box-shadow 0.1s ease;
 	}
 
-	li a:hover {
-		box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-		transform: translateY(-2px);
+	.card:hover {
+		transform: translate(-2px, -2px);
+		box-shadow: 6px 6px 0 var(--nb-ink);
 	}
 
-	li h2 {
-		color: #c45c3e;
+	.card.mint {
+		background: var(--nb-mint);
+	}
+	.card.pink {
+		background: var(--nb-pink);
+	}
+	.card.lemon {
+		background: var(--nb-lemon);
+	}
+	.card.sky {
+		background: var(--nb-sky);
+	}
+
+	.card h2 {
+		color: var(--nb-ink);
 		font-size: 1.15rem;
 		margin-bottom: 0.5rem;
 	}
 
-	li p {
+	.card p {
 		font-size: 0.95rem;
 		line-height: 1.7;
 		margin: 0;
+		color: var(--nb-fg-light);
 	}
 
 	.back {
 		grid-column: 1 / -1;
 		text-align: center;
-		color: #c45c3e;
-		text-decoration: none;
+		margin: 1rem auto 0;
+		justify-self: center;
 	}
 
-	.back:hover {
-		text-decoration: underline;
+	.button {
+		display: inline-block;
+		background: var(--nb-ink);
+		color: var(--nb-bg);
+		padding: 0.7rem 1.4rem;
+		font-weight: 900;
+		text-decoration: none;
+		transition:
+			transform 0.1s ease,
+			box-shadow 0.1s ease;
+	}
+
+	.button:hover {
+		transform: translate(-2px, -2px);
+		box-shadow: 2px 2px 0 var(--nb-ink);
 	}
 </style>

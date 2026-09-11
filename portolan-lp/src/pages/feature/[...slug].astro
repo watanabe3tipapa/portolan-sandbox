@@ -22,9 +22,9 @@ const next = features[currentIndex - 1];
 <Layout>
 	<main class="article">
 		<nav class="breadcrumb">
-			<a href={`${import.meta.env.BASE_URL}`}>&larr; ホーム</a>
+			<a href={`${import.meta.env.BASE_URL}`} class="crumb">ホーム</a>
 			<span>/</span>
-			<a href={`${import.meta.env.BASE_URL}feature/`}>特集</a>
+			<a href={`${import.meta.env.BASE_URL}feature/`} class="crumb">特集</a>
 		</nav>
 
 		<article>
@@ -40,8 +40,8 @@ const next = features[currentIndex - 1];
 		</article>
 
 		<nav class="pager">
-			{next && <a href={`${import.meta.env.BASE_URL}feature/${next.id}/`} class="prev">&larr; {next.data.title}</a>}
-			{prev && <a href={`${import.meta.env.BASE_URL}feature/${prev.id}/`} class="next">{prev.data.title} &rarr;</a>}
+			{next && <a href={`${import.meta.env.BASE_URL}feature/${next.id}/`} class="crumb prev">&larr; {next.data.title}</a>}
+			{prev && <a href={`${import.meta.env.BASE_URL}feature/${prev.id}/`} class="crumb next">{prev.data.title} &rarr;</a>}
 		</nav>
 	</main>
 </Layout>
@@ -50,68 +50,93 @@ const next = features[currentIndex - 1];
 	.article {
 		max-width: 760px;
 		margin: 0 auto;
-		padding: 2rem;
-		line-height: 1.8;
+		padding: 3rem 2rem;
 	}
 
 	.breadcrumb {
-		font-size: 0.9rem;
+		display: flex;
+		gap: 0.5rem;
+		align-items: center;
 		margin-bottom: 2rem;
+		font-weight: 700;
 	}
 
-	.breadcrumb a {
-		color: #c45c3e;
+	.crumb {
+		display: inline-block;
+		padding: 0.25rem 0.7rem;
+		background: var(--nb-bg);
+		border: var(--nb-border);
+		box-shadow: 2px 2px 0 var(--nb-ink);
 		text-decoration: none;
+		font-weight: 700;
+		transition:
+			transform 0.1s ease,
+			box-shadow 0.1s ease;
 	}
 
-	.breadcrumb a:hover {
-		text-decoration: underline;
+	.crumb:hover {
+		transform: translate(-1px, -1px);
+		box-shadow: 3px 3px 0 var(--nb-ink);
 	}
 
 	.breadcrumb span {
-		margin: 0 0.4rem;
-		color: #aaa;
+		color: var(--nb-fg-light);
+		font-weight: 400;
 	}
 
 	header {
-		margin-bottom: 2.5rem;
+		margin-bottom: 3rem;
 	}
 
 	h1 {
-		font-size: 2rem;
+		font-size: 2.2rem;
 		line-height: 1.4;
-		color: #1a2332;
 		margin-bottom: 0.5rem;
+		padding-bottom: 0.5rem;
+		border-bottom: var(--nb-border);
 	}
 
 	.description {
-		color: #5a6575;
+		color: var(--nb-fg-light);
+		margin: 0 0 0.5rem;
 	}
 
 	.date {
-		color: #8a93a3;
-		font-size: 0.9rem;
+		font-size: 0.85rem;
+		font-weight: 700;
+		color: var(--nb-fg-light);
+		opacity: 0.7;
+		margin: 0;
 	}
 
 	.content :global(h2) {
-		font-size: 1.5rem;
-		margin-top: 2.5rem;
-		border-bottom: 1px solid #e5ded1;
-		padding-bottom: 0.4rem;
+		font-size: 1.4rem;
+		font-weight: 900;
+		margin-top: 3rem;
+		margin-bottom: 0.8rem;
+		padding: 0.4rem 0.8rem;
+		background: var(--nb-mint);
+		border-left: 4px solid var(--nb-ink);
 	}
 
 	.content :global(h3) {
-		font-size: 1.2rem;
-		margin-top: 1.8rem;
+		font-size: 1.15rem;
+		font-weight: 900;
+		margin-top: 2rem;
+		padding-bottom: 0.3rem;
+		border-bottom: var(--nb-border);
 	}
 
 	.content :global(pre) {
-		background: #1a2332;
-		color: #e8e4dc;
-		padding: 1rem;
-		border-radius: 6px;
+		background: #2d2a3e;
+		color: #e0dcf0;
+		padding: 1.2rem;
+		border: var(--nb-border);
+		box-shadow: var(--nb-shadow);
 		overflow-x: auto;
 		font-size: 0.9rem;
+		line-height: 1.6;
+		margin: 1.2rem 0;
 	}
 
 	.content :global(code) {
@@ -119,40 +144,59 @@ const next = features[currentIndex - 1];
 	}
 
 	.content :global(p code) {
-		background: #f0ece2;
-		padding: 0.15rem 0.35rem;
-		border-radius: 4px;
+		background: var(--nb-lavender);
+		padding: 0.15rem 0.4rem;
+		font-weight: 700;
 		font-size: 0.9em;
 	}
 
 	.content :global(blockquote) {
-		border-left: 3px solid #c45c3e;
-		background: #f4f1ea;
+		border: var(--nb-border);
+		background: var(--nb-lemon);
+		box-shadow: 2px 2px 0 var(--nb-ink);
 		padding: 0.8rem 1.2rem;
 		margin: 1.5rem 0;
-		border-radius: 0 6px 6px 0;
+	}
+
+	.content :global(blockquote p) {
+		margin: 0;
 	}
 
 	.content :global(table) {
 		width: 100%;
 		border-collapse: collapse;
 		margin: 1.5rem 0;
+		border: var(--nb-border);
+		box-shadow: 2px 2px 0 var(--nb-ink);
 	}
 
 	.content :global(th),
 	.content :global(td) {
-		border: 1px solid #e5ded1;
+		border: var(--nb-border);
 		padding: 0.5rem 0.8rem;
 		text-align: left;
 		font-size: 0.95rem;
 	}
 
 	.content :global(th) {
-		background: #f4f1ea;
+		background: var(--nb-sky);
+		font-weight: 900;
+	}
+
+	.content :global(td) {
+		background: var(--nb-bg);
 	}
 
 	.content :global(a) {
-		color: #c45c3e;
+		color: var(--nb-ink);
+		font-weight: 700;
+		text-decoration: underline;
+		text-decoration-thickness: 2px;
+		text-underline-offset: 3px;
+	}
+
+	.content :global(a:hover) {
+		background: var(--nb-lemon);
 	}
 
 	.pager {
@@ -161,22 +205,17 @@ const next = features[currentIndex - 1];
 		gap: 1rem;
 		margin-top: 3rem;
 		padding-top: 1.5rem;
-		border-top: 1px solid #e5ded1;
+		border-top: var(--nb-border);
 	}
 
-	.pager a {
-		color: #c45c3e;
-		text-decoration: none;
-		max-width: 45%;
-		font-size: 0.95rem;
-	}
-
-	.pager a:hover {
-		text-decoration: underline;
+	.pager .crumb {
+		font-weight: 700;
+		max-width: 48%;
+		text-align: left;
 	}
 
 	.next {
 		margin-left: auto;
-		text-align: right;
+		text-align: right !important;
 	}
 </style>

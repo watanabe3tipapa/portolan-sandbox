@@ -5,6 +5,12 @@
 		<meta name="viewport" content="width=device-width" />
 		<link rel="icon" type="image/svg+xml" href={`${import.meta.env.BASE_URL}favicon.svg`} />
 		<link rel="icon" href={`${import.meta.env.BASE_URL}favicon.ico`} />
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700;900&display=swap"
+			rel="stylesheet"
+		/>
 		<meta name="generator" content={Astro.generator} />
 		<title>Portolan - AIが直接読める空間インフラ</title>
 		<meta name="description" content="地理空間データをAIが直接読める形で公開するための新しいオープン仕様" />
@@ -14,11 +20,41 @@
 	</body>
 </html>
 
-<style>
+<style is:global>
+	:root {
+		--nb-bg: #fdf6ec;
+		--nb-ink: #1f1f1f;
+		--nb-border: 2px solid #1f1f1f;
+		--nb-shadow: 4px 4px 0 #1f1f1f;
+		--nb-mint: #a8e6cf;
+		--nb-pink: #ffd3b6;
+		--nb-lavender: #dbe4ff;
+		--nb-lemon: #fbeea1;
+		--nb-sky: #b8e1f2;
+		--nb-fg-light: #5a5a5a;
+	}
+
 	html,
 	body {
 		margin: 0;
 		width: 100%;
-		height: 100%;
+		min-height: 100%;
+		background: var(--nb-bg);
+		color: var(--nb-ink);
+		font-family:
+			"Zen Maru Gothic",
+			"Hiragino Maru Gothic ProN",
+			"Hiragino Sans",
+			"Noto Sans JP",
+			sans-serif;
+		line-height: 1.8;
+	}
+
+	::selection {
+		background: var(--nb-lemon);
+	}
+
+	a {
+		color: var(--nb-ink);
 	}
 </style>
