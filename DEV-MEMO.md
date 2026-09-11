@@ -50,6 +50,11 @@ portolan-sandbox/                    ← GitHub Pages 公開元(リポジトリ)
 ├── README.md / README_en.md         # プロジェクト README(日本語メイン / 英語)
 ├── DEV-MEMO.md                      # 本ドキュメント(構想の source of truth)
 ├── LICENSE                          # MIT ライセンス(2026 watanabe3tipapa)
+├── demos/
+│   └── colab-mcp-server/            # Colab MCP server 検証プロジェクト(fastmcp)
+│       ├── server.py                # MCP ツール(read/write/convert/validate/deploy)
+│       ├── colab_portolan_mcp.ipynb # Colab で動くノートブック
+│       └── fixtures/collection.json # 検証用コレクション
 └── portolan-lp/                     # ASTRO 製 LP
     ├── astro.config.mjs             # site / base(GitHub Pages 用)・output: static
     ├── src/
@@ -143,6 +148,26 @@ frontmatter: `title` / `description` / `pubDate`(date)
   - 実体は `portolan-lp/public/demo-collection/`(Astro の `public/` に置くと `dist/` にコピーされ Pages で配信される)
   - サンプルデータ(poi.parquet): 東京 5 地点の POI(EPSG:3857 で保存 → AGENTS.md の「3857 は変換が必要」の例題に活用)
 
+### 検証記録(続き): 次段階(認証・Drive・GitHub Pages デプロイ) — 2026-09-11
+
+構想のゴール「Google アカウントだけで完結」のうち、残っていた 3 要素を追加・検証した。
+
+- **ツール追加**(`server.py`):
+  - `deploy_to_github_pages(repo, file_path, content, message)` — GitHub Contents API でファイルを commit。clone 不要で push も不要(commit 自体が push を兼ねる)
+  - `write_to_drive(filename, content)` — Colab でマウント済み Drive へ書き込み
+  - `_github_token()` / `_github_request()` — 認証の共通処理。トークンは `GITHUB_TOKEN` env、なければ `gh auth token` を参照
+- **検証結果**:
+  - `deploy_to_github_pages` を実リポジトリ(watanabe3tipapa/portolan-sandbox)の `portolan-lp/public/demo-collection/README.md` 新規作成で実行 → commit `80568a8` 成功
+  - 約 45 秒後に https://watanabe3tipapa.github.io/portolan-sandbox/demo-collection/README.md が **HTTP 200** で配信(GitHub Actions の自動デプロイが起動)
+  - つまり「git clone 不要・端末の git 環境不要」で、Contents API → commit → Pages 反映の一連が完結
+- **Colab 用ノートブック**: `demos/colab-mcp-server/colab_portolan_mcp.ipynb`
+  - Drive マウント(Google アカウント OAuth)→ GitHub token 入力 → server の各ツール呼び出し → Pages 反映確認まで 7 セクション
+  - Colab 上では `getpass` で token を入力し、セル表示に残さない
+- **技術メモ**:
+  - GitHub Contents API は既存ファイル更新時に `sha` が必要(GET で取得 → PUT に含める)。404 なら新規作成
+  - 認証は `gh` CLI の credential か env。Colab には `gh` が無いためトークン必須
+  - 更新ファイルは `portolan-lp/public/demo-collection/` に置く前提(Astro の `public/` は dist にコピーされて Pages に配信)
+
 ## 追録: Google アカウントと GitHub アカウントを両方持っている場合
 
 構想の「Google アカウントだけで完結」はハードルを下げるための極論であり、**現実の典型ユーザーは両アカウントを持っている**。両方保有時のワークフローを整理する(2026-09-11 追録)。
@@ -185,6 +210,6 @@ AI エージェント(任意の MCP クライアント)
 
 ## 今後やること(仮)
 
-- **Colab MCP server の次段階**: 認証(Google アカウント)・Drive アクセス・GitHub Pages へのデプロイツールを server に追加し、Colab 単体で完結する構成を検証(構想節と連動)
+- **Colab MCP server の次段階**: 認証(Google アカウント)・Drive アクセス・GitHub Pages へのデプロイツールを server に追加し、Colab 単体で完結する構成を検証(構想節と連動) ✅ 追加済み(→ 検証記録の続きを参照)
 - 両アカウント保有時のワークフローの DP / feature 記事への反映
 - tutorial / feature 記事のさらなる内容充実と更新
