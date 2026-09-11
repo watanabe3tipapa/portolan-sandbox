@@ -1,0 +1,16 @@
+{
+  "stac_version": "1.0.0",
+  "type": "Collection",
+  "id": "demo-poi-tokyo",
+  "description": "Sample POI dataset for Tokyo (demo)",
+  "license": "CC0-1.0",
+  "extent": {
+    "spatial": { "bbox": [[139.5, 35.5, 140.0, 36.0]] },
+    "temporal": { "interval": [["2026-01-01T00:00:00Z", null]] }
+  },
+  "links": [
+    { "rel": "items", "type": "application/x-parquet", "href": "data/poi.parquet" },
+    { "rel": "derived_from", "type": "text/markdown", "href": "README.md" },
+    { "rel": "via", "type": "text/markdown", "href": "AGENTS.md" }
+  ]
+}
