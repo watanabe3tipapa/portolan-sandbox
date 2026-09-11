@@ -103,7 +103,7 @@ frontmatter: `title` / `description` / `pubDate`(date)
 | M4 | README 日英 2 版作成(v0.1.0) | README.md / README_en.md を生成、okf-seedling の構成に準拠 |
 | M5 | チュートリアルコーナー | コレクション + 記事 5 本 + 一覧・個別ページ |
 | M6 | 特集コーナー | feature コレクション + 記事 4 本 + 一覧・個別ページ |
-| M7 | リモート公開 | GitHub リポジトリ作成 + GH Pages に LP 公開(PR 後に着手) |
+| M7 | リモート公開 | GitHub リポジトリ作成 + GH Pages に LP 公開(公開 URL で 200 確認) |
 
 ## 実装メモ
 
@@ -114,12 +114,13 @@ frontmatter: `title` / `description` / `pubDate`(date)
 
 ## デプロイ状況
 
-- GitHub Pages: **未公開**(リモートリポジトリ未作成)。公開 URL: https://watanabe3tipapa.github.io/portolan-sandbox/
-- リモート作成後: (1) リポジトリ作成、(2) `git init` → branch `main` → push、(3) Pages 設定で Source を GitHub Actions に、(4) push 毎に自動デプロイ
+- GitHub Pages: **公開済み**(2026-09-11)。公開 URL: https://watanabe3tipapa.github.io/portolan-sandbox/
+- リポジトリ: watanabe3tipapa/portolan-sandbox(Public)
+- デプロイ経路: GitHub Actions(`.github/workflows/deploy.yml`)の build → deploy-pages。main への push で自動デプロイ
+- Pages 設定: Source を **GitHub Actions**(build_type: workflow)に設定済み
 
 ## 今後やること(仮)
 
-- リモートリポジトリ作成と初回デプロイ(M7)
 - LICENSE の決定(MIT 検討中)→ README / バッジの反映
 - 「Google アカウントだけで完結する認証・デプロイ」検証(Colab / Colab MCP server、本ファイル「構想」節と連動)
 - tutorial 記事の内容充実と、特集記事の更新
