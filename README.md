@@ -4,8 +4,10 @@
 
 portolan-sandbox は、オープン仕様「Portolan」を身近に使えるようにするための手法を開拓する実験リポジトリです。Google アカウントだけで認証・デプロイまで対応できる構成を目指し、LP・構想メモ・要約記事をひとまとめに管理します。
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Version](https://img.shields.io/badge/version-v0.1.0-blue.svg)](https://github.com/watanabe3tipapa/portolan-sandbox/releases)
 [![GitHub](https://img.shields.io/github/issues/watanabe3tipapa/portolan-sandbox.svg)](https://github.com/watanabe3tipapa/portolan-sandbox/issues)
+[![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-live-blue.svg)](https://watanabe3tipapa.github.io/portolan-sandbox/)
 
 [日本語](README.md) | [English](README_en.md)
 
@@ -79,6 +81,7 @@ npm run build
 - portolan-lp/ — ASTRO 製ランディングページ
 - .github/workflows/deploy.yml — GitHub Pages 自動デプロイ用ワークフロー
 - README.md / README_en.md — 本ドキュメント（日本語・英語）
+- LICENSE — MIT ライセンス
 
 ---
 
@@ -106,7 +109,7 @@ npm run build
 
 ## ライセンス
 
-ライセンスは未定です（MIT を検討中）。決定次第 LICENSE ファイルを追加します。
+MIT ライセンス — 詳細は [LICENSE](LICENSE) ファイルを参照してください。
 
 ---
 

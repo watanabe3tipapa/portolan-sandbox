@@ -4,8 +4,10 @@
 
 portolan-sandbox is an experimental repository for developing ways to make the open specification "Portolan" more accessible. It aims for a setup where authentication and deployment can be handled with just a Google account, while managing the LP, concept notes, and summary articles in one place.
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Version](https://img.shields.io/badge/version-v0.1.0-blue.svg)](https://github.com/watanabe3tipapa/portolan-sandbox/releases)
 [![GitHub](https://img.shields.io/github/issues/watanabe3tipapa/portolan-sandbox.svg)](https://github.com/watanabe3tipapa/portolan-sandbox/issues)
+[![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-live-blue.svg)](https://watanabe3tipapa.github.io/portolan-sandbox/)
 
 [Japanese](README.md) | [English](README_en.md)
 
@@ -79,6 +81,7 @@ npm run build
 - `portolan-lp/` — ASTRO-based landing page
 - `.github/workflows/deploy.yml` — GitHub Pages auto-deploy workflow
 - `README.md` / `README_en.md` — this documentation (Japanese / English)
+- `LICENSE` — MIT License
 
 ---
 
@@ -106,7 +109,7 @@ For details, see the repository's Issues page.
 
 ## License
 
-License is to be determined (MIT is under consideration). A LICENSE file will be added once decided.
+MIT License — see the [LICENSE](LICENSE) file for details.
 
 ---
 

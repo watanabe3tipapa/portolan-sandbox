@@ -24,6 +24,7 @@ portolan-sandbox 開発メモ。「AI が直接読める空間インフラ Porto
 4. **チュートリアルはコンテンツコレクション(`tutorial`)で管理**。番号(order)付きで学習順を明示
 5. **特集コーナーはコンテンツコレクション(`feature`)で管理**。Google Maps×OSM 連携・共通プロトコル・実証デモ・Colab MCP server を収録
 6. README は okf-seedling に倣って **日英 2 版**(メインは日本語)
+7. **ライセンスは MIT**。LICENSE ファイルをリポジトリ配布(okf-seedling と同形式)
 
 ## 技術制約(検証済み)
 
@@ -48,6 +49,7 @@ portolan-sandbox/                    ← GitHub Pages 公開元(リポジトリ)
 ├── Portolan_要約.html               # GeoAI 第16回「地図データを配る」時代の終わり 要約
 ├── README.md / README_en.md         # プロジェクト README(日本語メイン / 英語)
 ├── DEV-MEMO.md                      # 本ドキュメント(構想の source of truth)
+├── LICENSE                          # MIT ライセンス(2026 watanabe3tipapa)
 └── portolan-lp/                     # ASTRO 製 LP
     ├── astro.config.mjs             # site / base(GitHub Pages 用)・output: static
     ├── src/
@@ -104,6 +106,7 @@ frontmatter: `title` / `description` / `pubDate`(date)
 | M5 | チュートリアルコーナー | コレクション + 記事 5 本 + 一覧・個別ページ |
 | M6 | 特集コーナー | feature コレクション + 記事 4 本 + 一覧・個別ページ |
 | M7 | リモート公開 | GitHub リポジトリ作成 + GH Pages に LP 公開(公開 URL で 200 確認) |
+| M8 | LICENSE 決定(MIT) | LICENSE 追加 + README ライセンス節・バッジへ反映 |
 
 ## 実装メモ
 
@@ -121,6 +124,5 @@ frontmatter: `title` / `description` / `pubDate`(date)
 
 ## 今後やること(仮)
 
-- LICENSE の決定(MIT 検討中)→ README / バッジの反映
 - 「Google アカウントだけで完結する認証・デプロイ」検証(Colab / Colab MCP server、本ファイル「構想」節と連動)
 - tutorial 記事の内容充実と、特集記事の更新
