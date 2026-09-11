@@ -96,7 +96,7 @@ mcp.run()  # transport は stdio / streamable HTTP を選択可能
 
 - Portolan と Google Colaboratory との連携手法
 - Colab MCP server（パーソナル・開発サーバーとしての位置付け）の利活用
-- Google アカウントだけで全ての措置（認証・デプロイなど）に対応
+- Google アカウントだけで全ての操作（認証・デプロイなど）に対応
 
 Colab MCP server は、その構想を現実化するための「要」になる存在です。
 

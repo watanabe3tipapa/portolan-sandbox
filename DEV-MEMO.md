@@ -5,7 +5,7 @@ portolan-sandbox 開発メモ。「AI が直接読める空間インフラ Porto
 ## 構想(PLAN.md から移行)
 
 - できるだけ多くの人々が Portolan を身近に使えるようにするための手法の開拓
-- Google アカウントだけで全ての措置(認証・デプロイなど)に対応したい
+- Google アカウントだけで全ての操作(認証・デプロイなど)に対応したい
 - 考察していること: Portolan と Google Colaboratory との連携手法 / Colab MCP server(パーソナル・開発サーバーとしての位置付け)の利活用
 - 直接読める空間インフラの啓発活動と、その具体的な活用方法の検討
 
@@ -224,7 +224,7 @@ AI エージェント(任意の MCP クライアント)
   - `pull_local_llm(model)` — モデルをダウンロード(例: qwen2.5:0.5b)
   - `ask_local_llm(question, model, system)` — ローカル LLM へ直接質問(外部 API へ送らない)
   - `geo_analyze_local_llm(source, question, model)` — GeoParquet を読み、サンプルをローカル LLM で分析
-- **ポイント**: `OLLAMA_MODELS` に Google Drive パスを指定して servers 起動することで、モデルを**Drive に永続マウント**し、ランタイム再起動後も再利用できる
+- **ポイント**: `OLLAMA_MODELS` に Google Drive パスを指定してサーバー起動することで、モデルを**Drive に永続マウント**し、ランタイム再起動後も再利用できる
 - **Colab ノートブック**にセクション 8〜10 追加(Ollama インストール → Drive 永続化 → 起動 → モデル pull → 空間解析)
 - **状態**: ツール読み込み・構文確認済み。モデル pull の実機検証は中断(Model サイズ約 500MB のため)。TODO: 後日まとめてチュートリアル化する際に再検証する
 - **実機検証(2026-09-11、追記)**: `ollama pull qwen2.5:0.5b` 成功 → ローカルで `ollama_status` が `model_present: true` → `ask_local_llm`(CRS 質問に UTM と回答)／`geo_analyze_local_llm`(公開 poi.parquet を読んで "The dataset contains information about various locations." と回答)を確認。4 ツールすべて正常動作
@@ -232,3 +232,13 @@ AI エージェント(任意の MCP クライアント)
 ## 今後やること(仮)
 
 - 上記の各マイルストーン(M9〜M13)は完了。新規の検証テーマが出た時点で随時追加する
+
+## 仕上げ: タイポチェック実施 — 2026-09-11
+
+- 全 md / html を対象に日本語・英語のタイポをスキャンし、次の誤記を修正:
+  - `helsinki-demo.md`: 「標深 FOSS4G」→「FOSS4G コミュニティにおける地理空間データの合言葉」
+  - `DEV-MEMO.md`: 「servers 起動」→「サーバー起動」、「措置」→「操作」
+  - `colab-mcp-server.md` / `gmaps-osm-interop.md`: 「措置」→「操作」、「実時間性」→「リアルタイム性」
+  - `tutorial/04-google-colab.md`: 「このチュートリアルはおわり / 全 5 ステップ」→ 「途中です」+ 05 への案内（チュートリアル 6 本構成に整合）
+  - `tutorial/00-what-is-portolan.md`: シリーズの流れに 06(ローカル LLM) を追加
+- ビルド確認済み(14 ページ生成、エラーなし)。リポジトリ内の残存タイポは確認されず

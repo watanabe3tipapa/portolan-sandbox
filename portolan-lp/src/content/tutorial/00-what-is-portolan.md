@@ -88,5 +88,6 @@ Portolan ではデータは出版者のストレージに留まり、AI エー�
 3. AGENTS.md を書く
 4. GitHub Pages で公開する
 5. Google Colaboratory と連携する
+6. ローカル LLM でデータ解析する
 
 次のステップ: [最初のコレクションを作る](../01-create-a-collection/)
