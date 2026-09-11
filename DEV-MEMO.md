@@ -143,7 +143,48 @@ frontmatter: `title` / `description` / `pubDate`(date)
   - 実体は `portolan-lp/public/demo-collection/`(Astro の `public/` に置くと `dist/` にコピーされ Pages で配信される)
   - サンプルデータ(poi.parquet): 東京 5 地点の POI(EPSG:3857 で保存 → AGENTS.md の「3857 は変換が必要」の例題に活用)
 
+## 追録: Google アカウントと GitHub アカウントを両方持っている場合
+
+構想の「Google アカウントだけで完結」はハードルを下げるための極論であり、**現実の典型ユーザーは両アカウントを持っている**。両方保有時のワークフローを整理する(2026-09-11 追録)。
+
+### 役割分担の整理
+
+| レイヤー | Google アカウント(Colab) | GitHub アカウント(リポジトリ) |
+|---|---|---|
+| 認証 | OAuth でログイン、追加基盤不要 | GitHub 自体が認証基盤 |
+| データ生成・検証 | GeoPandas 等で前処理・CRS 変換 | / |
+| コンテンツ配信 | / | GitHub Pages(GitHub Actions) |
+| メタデータ・カタログ | 生成した collection.json を置く | Pages 上の公開 URL(demo-collection 等) |
+| AI 連携 | Colab MCP server(パーソナル・開発サーバー) | Pages 公開データを参照(認証不要) |
+| 版管理・コラボ | / | git / PR / Issue |
+
+### 両方持っているときの主経路(本リポジトリの実例)
+
+```text
+データ準備(Colab)
+  └─ GeoPandas で 3857→4326 変換などの前処理・検証
+  └─ collection.json / AGENTS.md を生成
+public/ に配置 → commit → push(GitHub アカウント)
+  └─ GitHub Actions が自動で build → Pages デプロイ
+AI エージェント(任意の MCP クライアント)
+  └─ Pages 公開 URL(collection.json / *.parquet)を直接参照
+  └─ Colab MCP server を経由すれば、Google アカウントの状態も操作
+```
+
+### 使い分けの指針
+
+| 状況 | どちらを使うか |
+|---|---|
+| 手元にいないがデータを確かめたい | Google アカウント + Colab(ブラウザだけで完結) |
+| 公開・配信・版管理したい | GitHub アカウント(Pages / Actions / git) |
+| エージェントに「読ませる」 | どちらのアカウントでも可(Pages 公開 URL は認証不要) |
+| 個人の開発サーバーとして使いたい | Google アカウント + Colab MCP server |
+
+- **本リポジトリは「両方持っている」場合の実例**であり、Python をインストールできない環境でも Colab でデータを整えて GitHub Pages へ渡せる。
+- 「Google アカウントだけ」の極論は、GitHub 未所有の初学者や教育現場を想定した下位互換の構想として残す。
+
 ## 今後やること(仮)
 
 - **Colab MCP server の次段階**: 認証(Google アカウント)・Drive アクセス・GitHub Pages へのデプロイツールを server に追加し、Colab 単体で完結する構成を検証(構想節と連動)
+- 両アカウント保有時のワークフローの DP / feature 記事への反映
 - tutorial / feature 記事のさらなる内容充実と更新
