@@ -3,6 +3,7 @@ from __future__ import annotations
 import base64
 import json
 import os
+import shutil
 import subprocess
 import urllib.error
 import urllib.request
@@ -199,6 +200,163 @@ def validate_collection(path: str) -> str:
         ensure_ascii=False,
         indent=2,
     )
+
+
+def _ollama_bin() -> str:
+    """Resolve the ollama binary path."""
+    bin_path = shutil.which("ollama")
+    if bin_path:
+        return bin_path
+    local = Path.home() / "bin" / "ollama"
+    if local.exists():
+        return str(local)
+    raise RuntimeError(
+        "ollama not found. On Colab: "
+        "!curl -fsSL https://ollama.com/install.sh | sh"
+    )
+
+
+@mcp.tool
+def ollama_status(model: str) -> str:
+    """Return whether a local ollama binary exists and the model is present.
+
+    Args:
+        model: Model tag, e.g. "qwen2.5:0.5b".
+    """
+    try:
+        bin_path = _ollama_bin()
+    except RuntimeError as exc:
+        return json.dumps({"ok": False, "message": str(exc)}, ensure_ascii=False)
+    result = {"ok": True, "binary": bin_path}
+    try:
+        out = subprocess.run(
+            [bin_path, "list"], capture_output=True, text=True, timeout=30
+        )
+        result["installed_models"] = [
+            line.split()[0] for line in out.stdout.splitlines()[1:]
+        ]
+        result["model_present"] = model in result["installed_models"]
+    except subprocess.TimeoutExpired:
+        result["installed_models"] = []
+        result["model_present"] = False
+    return json.dumps(result, ensure_ascii=False, indent=2)
+
+
+@mcp.tool
+def pull_local_llm(model: str) -> str:
+    """Download a model into the local ollama store.
+
+    Run this after mounting/installing ollama. Downloads go to the ollama
+    model store (by default the machine's home dir). To persist on Colab,
+    set OLLAMA_MODELS (env var) to a Google Drive folder BEFORE starting
+    ollama.
+
+    Args:
+        model: Model tag, e.g. "qwen2.5:0.5b", "llama3.2:1b".
+    """
+    bin_path = _ollama_bin()
+    out = subprocess.run(
+        [bin_path, "pull", model], capture_output=True, text=True, timeout=1800
+    )
+    return json.dumps(
+        {
+            "ok": out.returncode == 0,
+            "model": model,
+            "stdout": out.stdout[-500:],
+            "stderr": out.stderr[-500:],
+        },
+        ensure_ascii=False,
+        indent=2,
+    )
+
+
+@mcp.tool
+def ask_local_llm(
+    question: str,
+    model: str,
+    system: str = "You are a helpful geospatial data assistant.",
+) -> str:
+    """Ask a question to a locally hosted LLM via ollama.
+
+    Requires ollama to be running (`ollama serve`) and the model already
+    pulled. If you get a connection error, run `pull_local_llm` first.
+
+    Args:
+        question: The question to ask.
+        model: Model tag, e.g. "qwen2.5:0.5b".
+        system: Optional system prompt.
+    """
+    try:
+        import ollama
+    except ImportError:
+        return json.dumps(
+            {"ok": False, "message": "pip install ollama (Python client)"},
+            ensure_ascii=False,
+        )
+    try:
+        response = ollama.chat(
+            model=model,
+            messages=[
+                {"role": "system", "content": system},
+                {"role": "user", "content": question},
+            ],
+        )
+        return json.dumps(
+            {
+                "ok": True,
+                "model": model,
+                "answer": response["message"]["content"],
+                "eval_count": response.get("eval_count"),
+                "eval_duration_ms": (
+                    (response.get("eval_duration") or 0) / 1_000_000
+                    if response.get("eval_duration")
+                    else None
+                ),
+            },
+            ensure_ascii=False,
+            indent=2,
+        )
+    except Exception as exc:  # noqa: BLE001
+        return json.dumps(
+            {
+                "ok": False,
+                "message": str(exc),
+                "hint": "Ensure ollama serve is running and the model is pulled.",
+            },
+            ensure_ascii=False,
+            indent=2,
+        )
+
+
+@mcp.tool
+def geo_analyze_local_llm(
+    source: str,
+    question: str,
+    model: str,
+    limit: int = 20,
+) -> str:
+    """Analyze a GeoParquet file with a local LLM (no external API).
+
+    Reads a GeoParquet (local path or public URL), extracts a small sample,
+    and asks the local LLM to reason about it. Good for pattern discovery
+    while keeping the data on-device / on the mounted Drive.
+
+    Args:
+        source: GeoParquet file path or URL.
+        question: Analytical question (e.g. "which stations are near each other?").
+        model: Local model tag, e.g. "qwen2.5:0.5b".
+        limit: Number of sample features to include.
+    """
+    gdf = _load_parquet(source)
+    sample = gdf.head(limit)
+    data_view = sample.drop(columns=["geometry"]).to_json(orient="records")
+
+    context = (
+        f"I have a GeoDataFrame with {len(gdf)} rows, columns "
+        f"{list(gdf.columns)}, CRS {gdf.crs}. Here are {len(sample)} sample rows as JSON:\n"
+        f"{data_view}\n\nQuestion: {question}"
+    )
+    return ask_local_llm(context, model=model)
 
 
 @mcp.tool

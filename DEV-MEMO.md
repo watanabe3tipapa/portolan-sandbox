@@ -208,8 +208,22 @@ AI エージェント(任意の MCP クライアント)
 - **本リポジトリは「両方持っている」場合の実例**であり、Python をインストールできない環境でも Colab でデータを整えて GitHub Pages へ渡せる。
 - 「Google アカウントだけ」の極論は、GitHub 未所有の初学者や教育現場を想定した下位互換の構想として残す。
 
+### 検証記録(続々): ローカル LLM 環境のマウント用例 — 2026-09-11
+
+「Colab 上にローカル LLM をマウントすれば、多様な解析(空間解析含む)が可能になる」という仮説の実装を行った。
+
+- **ツール追加**(`server.py`、依存に `ollama` Python クライアントを追加):
+  - `ollama_status(model)` — Ollama バイナリ有無・モデル保持状況の確認
+  - `pull_local_llm(model)` — モデルをダウンロード(例: qwen2.5:0.5b)
+  - `ask_local_llm(question, model, system)` — ローカル LLM へ直接質問(外部 API へ送らない)
+  - `geo_analyze_local_llm(source, question, model)` — GeoParquet を読み、サンプルをローカル LLM で分析
+- **ポイント**: `OLLAMA_MODELS` に Google Drive パスを指定して servers 起動することで、モデルを**Drive に永続マウント**し、ランタイム再起動後も再利用できる
+- **Colab ノートブック**にセクション 8〜10 追加(Ollama インストール → Drive 永続化 → 起動 → モデル pull → 空間解析)
+- **状態**: ツール読み込み・構文確認済み。モデル pull の実機検証は中断(Model サイズ約 500MB のため)。TODO: 後日まとめてチュートリアル化する際に再検証する
+
 ## 今後やること(仮)
 
 - **Colab MCP server の次段階**: 認証(Google アカウント)・Drive アクセス・GitHub Pages へのデプロイツールを server に追加し、Colab 単体で完結する構成を検証(構想節と連動) ✅ 追加済み(→ 検証記録の続きを参照)
+- **ローカル LLM のチュートリアル化**: Ollama の Drive マウント + `geo_analyze_local_llm` の操作手順を tutorial 記事としてまとめる(モデル pull の実機検証含む)
 - 両アカウント保有時のワークフローの DP / feature 記事への反映
 - tutorial / feature 記事のさらなる内容充実と更新

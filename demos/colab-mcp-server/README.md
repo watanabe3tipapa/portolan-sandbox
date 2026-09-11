@@ -19,6 +19,25 @@
 | `validate_collection(path)` | collection.json を STAC/Portolan の基本で検証 |
 | `deploy_to_github_pages(repo, file_path, content, message)` | GitHub Contents API でリポジトリのファイルを更新（push 不要） |
 | `write_to_drive(filename, content)` | マウント済み Google Drive への書き込み |
+| `ollama_status(model)` | ローカル Ollama の有無・モデル保持状況を確認 |
+| `pull_local_llm(model)` | Ollama へモデルをダウンロード |
+| `ask_local_llm(question, model)` | ローカル LLM（Ollama）へ直接質問 |
+| `geo_analyze_local_llm(source, question, model)` | GeoParquet を読み、サンプルをローカル LLM で分析（外部 API なし） |
+
+## ローカル LLM 環境のマウント（Colab）
+
+データを外部 API に送らずに解析するため、Colab 上に Ollama を構築します。モデルストアに **Google Drive** を指定すると、ランタイム再起動後も再利用できます。
+
+```bash
+# インストール（ランタイム内）
+curl -fsSL https://ollama.com/install.sh | sh
+# モデルストアを Drive に永続化（マウント済み前提）
+export OLLAMA_MODELS=/content/drive/MyDrive/ollama
+nohup ollama serve > /tmp/ollama.log 2>&1 &
+ollama pull qwen2.5:0.5b   # 初回のみ（約 500MB）
+```
+
+動作例はノートブックのセクション 8〜10 を参照してください。
 
 ## ローカルでの検証
 
