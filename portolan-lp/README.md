@@ -4,7 +4,7 @@ AIが直接読める空間インフラ「Portolan」のランディングペー�
 
 ## 概要
 
-地理空間データを「AIが直接読める形で」公開するための新しいオープン仕様「Portolan」を紹介するランディングページです。
+地理空間データを「AIが直接読める形で」公開するための新しいオープン仕様「Portolan」を紹介するランディングページです。チュートリアル 6 本 + 事例 5 本の記事を掲載し、各記事には archify で生成した構成図（自己完結型 HTML）を iframe で埋め込んでいます。
 
 ## 開発環境
 
@@ -32,15 +32,23 @@ npm run deploy
 ```text
 /
 ├── public/
-│   └── favicon.svg
-├── src
-│   ├── layouts
-│   │   └── Layout.astro
-│   └── pages
-│       └── index.astro
-├── .github/workflows/
-│   └── deploy.yml
-└── package.json
+│   ├── favicon.svg / favicon.ico
+│   ├── demo-collection/     # デモ用データコレクション
+│   └── diagrams/            # archify 図（自己完結型 HTML）
+│       ├── tutorial-00.html … tutorial-05.html
+│       └── colab-mcp-server.html, gmaps-osm-interop.html,
+│           common-protocols.html, helsinki-demo.html,
+│           google-github-workflow.html
+└── src
+    ├── layouts
+    │   └── Layout.astro     # 共通レイアウト（.diagram 埋め込みスタイル）
+    ├── content
+    │   ├── tutorial/        # 記事 6 本（00 〜 05）
+    │   └── feature/         # 事例 5 本
+    └── pages
+        ├── index.astro
+        ├── tutorial/index.astro, tutorial/[...slug].astro
+        └── feature/index.astro, feature/[...slug].astro
 ```
 
 ## 参考
