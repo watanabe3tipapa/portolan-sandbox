@@ -8,6 +8,11 @@ pubDate: 2026-09-11
 
 地理空間データはこれまで、ポータル・専用 API・FTP という「それぞれ違う入り口」で配布されてきました。AI エージェントが自律的にデータを調達するには、入り口の差異を吸収する共通の読み口が必要です。
 
+<figure class="diagram">
+  <iframe src="../../diagrams/common-protocols.html" title="共通プロトコルの使い分け" loading="lazy"></iframe>
+  <figcaption>図: STAC・GeoParquet・PMTiles・COG — 用途に応じた共通プロトコルの使い分け</figcaption>
+</figure>
+
 ## 主要な共通プロトコル
 
 ### STAC（SpatioTemporal Asset Catalog）
@@ -116,5 +121,5 @@ portolan
 ├── GeoParquet      → 高速フィルタ
 ├── PMTiles         → タイル配信
 ├── COG             → ラスター参照
-└── AGENTS.md       → エージェントへの指引
+└── AGENTS.md       → エージェントへの案内
 ```

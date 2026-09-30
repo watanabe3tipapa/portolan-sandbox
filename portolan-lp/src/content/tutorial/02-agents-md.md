@@ -11,6 +11,11 @@ AGENTS.md は、AI エージェントがデータを正しく使うための「�
 
 エージェントは「説明書がなければ試行錯誤を繰り返す」。加えて API ドキュメントや独自仕様を毎回解釈するのは非効率です。先行して AGENTS.md を読ませることで、最初から正しいパスでクエリを発行できます。
 
+<figure class="diagram">
+  <iframe src="../../diagrams/tutorial-02.html" title="AGENTS.md の効果" loading="lazy"></iframe>
+  <figcaption>図: AGENTS.md の効果 — 説明書がない場合の試行錯誤と、ある場合の正しいパスを比較</figcaption>
+</figure>
+
 ## 何を書くのか
 
 Portolan の AGENTS.md は、次の 5 項目を必ず含めると破綻が少ないです。

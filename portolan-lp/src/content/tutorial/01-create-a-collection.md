@@ -9,6 +9,11 @@ pubDate: 2026-09-11
 
 コレクションは Portolan で公開するデータの単位です。`collection.json` がその目次（カタログ）として振る舞います。Portolan は既存標準（STAC 互換のメタデータ）を使うため、既存の STAC エコシステムとそのまま連携できます。
 
+<figure class="diagram">
+  <iframe src="../../diagrams/tutorial-01.html" title="コレクションの構成" loading="lazy"></iframe>
+  <figcaption>図: コレクションの構成 — collection.json が目次となり、オブジェクトストレージ上の実データを参照する</figcaption>
+</figure>
+
 ## 最小構成
 
 `collection.json` は 1 ファイルあればコレクションとして成立します。実際のデータ（GeoParquet・PMTiles など）はリンクで参照します。

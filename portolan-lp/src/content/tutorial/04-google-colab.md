@@ -11,6 +11,11 @@ pubDate: 2026-09-11
 
 Colab はブラウザ上で動作するため、ローカルに Python や GIS ツールをインストールする必要がありません。Google アカウントでログインするだけで、（制限付きで）GPU / 高メモリのランタイムも利用できます。
 
+<figure class="diagram">
+  <iframe src="../../diagrams/tutorial-04.html" title="Colab をパーソナル・開発サーバーとして使う構成" loading="lazy"></iframe>
+  <figcaption>図: Colab をパーソナル・開発サーバーとして使う構成 — エージェントから Colab の環境・ストレージへ接続</figcaption>
+</figure>
+
 ## Colab の位置付け
 
 - **認証**: Google アカウントでログイン → 追加の認証基盤が不要

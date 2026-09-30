@@ -242,3 +242,16 @@ AI エージェント(任意の MCP クライアント)
   - `tutorial/04-google-colab.md`: 「このチュートリアルはおわり / 全 5 ステップ」→ 「途中です」+ 05 への案内（チュートリアル 6 本構成に整合）
   - `tutorial/00-what-is-portolan.md`: シリーズの流れに 06(ローカル LLM) を追加
 - ビルド確認済み(14 ページ生成、エラーなし)。リポジトリ内の残存タイポは確認されず
+
+## 仕上げ(図の総点検): archify 11 図 + iframe 埋め込み — 2026-09-30
+
+LP に archify 図(全 11: tutorial 6 + feature 5)を埋め込み、総点検を実施した。
+
+- **図の生成と配置**: すべて `--quality showcase --json` + `meta.locale: ja` + `meta.translations` に `examples/locales/ja.json`(423 キー)を注入。各図のフォルダは `.archify/arch-{tutorialNN|feat-*}-20260930-102113/`
+- **iframe 埋め込み**: 11 記事すべての冒頭イントロ直後に `<figure class="diagram">` + `../../diagrams/<slug>.html`(相対パス、base ルートを経由して `/portolan-sandbox/diagrams/` に到達)。`Layout.astro` の `:global` スタイルに `.diagram` / `iframe` / `figcaption` を追加
+- **タイポ・表記修正**:
+  - `common-protocols`(図 JSON の edge ラベル + カード項目): 「指引」(中国語) →「案内」×2
+  - `common-protocols.md`(ASCII 図): 「エージェントへの指引」→「エージェントへの案内」
+  - `tutorial-04`(図 JSON): 「必要部分」→「必要な部分」(tutorial-00 の表現に統一)
+- **検証方法**: 全 body/candidate に対し Python で機械スキャン(二重スペース・全角英数字・制御文字・中国語表現・表記揺れ等)。再生成した 2 図は candidate 再注入 → finalize 再実行(全ゲート pass)→ `public/diagrams/` に再コピー → `npm run build` ≠ 成功、preview + curl で全 11 記事・全 11 図が 200
+- **残作業**: ユーザー確認後にコミット・push(未実施)

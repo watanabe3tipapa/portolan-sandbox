@@ -10,6 +10,11 @@ Google Colaboratory（Colab）はブラウザ上で動く Jupyter ノートブ�
 
 「Google アカウントだけで全ての操作を済ませたい」という構想において、Colab は認証・仮想環境・（間接的に）ストレージまで提供する要の存在です。
 
+<figure class="diagram">
+  <iframe src="../../diagrams/colab-mcp-server.html" title="Colab MCP server が期待できる機能" loading="lazy"></iframe>
+  <figcaption>図: Colab MCP server — Google アカウントだけで完結する開発基盤の構成</figcaption>
+</figure>
+
 ## MCP server とは
 
 MCP は AI モデルと外部のデータ・ツールを接続するための共通プロトコルです。MCP server を用意すると、エージェントは「ファイルの読み書き」「ツールの実行」「データの参照」などを統一された方法で行えます。

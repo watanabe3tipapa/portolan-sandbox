@@ -7,6 +7,11 @@ pubDate: 2026-09-11
 
 このチュートリアルシリーズでは、AI が直接読める空間インフラ「Portolan」を、実際に作って・公開するところまで学びます。
 
+<figure class="diagram">
+  <iframe src="../../diagrams/tutorial-00.html" title="Portolan の全体像" loading="lazy"></iframe>
+  <figcaption>図: Portolan の全体像 — 出版者と AI エージェントをつなぐ 3 つの「入り口」</figcaption>
+</figure>
+
 ## Portolan が生まれた背景
 
 地理空間データはこれまでポータルサイトや専用 API、FTP サーバーで配布されてきました。利用者は毎回ダウンロードと前処理を行い、AI エージェントにとっては大きな障壁でした。

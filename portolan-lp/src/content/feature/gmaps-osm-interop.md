@@ -15,6 +15,11 @@ pubDate: 2026-09-11
 
 両者は表現・許諾・更新方法が根本的に異なり、これまで「データを直接つなぐ」ことは難しかったと言えます。
 
+<figure class="diagram">
+  <iframe src="../../diagrams/gmaps-osm-interop.html" title="Google Maps × OpenStreetMap のデータ連携" loading="lazy"></iframe>
+  <figcaption>図: Google Maps × OpenStreetMap — Portolan が両者の「共通の読み口」になる</figcaption>
+</figure>
+
 ## 両者の技術的な違い
 
 ### 座標系の差

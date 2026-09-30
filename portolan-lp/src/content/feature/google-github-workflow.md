@@ -10,6 +10,11 @@ pubDate: 2026-09-11
 
 両方を持っている人が、Portolan のデータコレクションを「準備 → 公開 → AI に読ませる」まで一気通貫で行うためのワークフローを整理します。
 
+<figure class="diagram">
+  <iframe src="../../diagrams/google-github-workflow.html" title="Google × GitHub の両立ワークフロー" loading="lazy"></iframe>
+  <figcaption>図: Google アカウント × GitHub アカウント — データ準備から公開・参照までの一気通貫の流れ</figcaption>
+</figure>
+
 ## 役割分担
 
 | レイヤー | Google アカウント（Colab） | GitHub アカウント（リポジトリ） |

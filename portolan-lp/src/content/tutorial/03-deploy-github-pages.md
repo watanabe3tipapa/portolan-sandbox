@@ -9,6 +9,11 @@ pubDate: 2026-09-11
 
 Portolan は静的ファイル（GeoParquet・PMTiles・collection.json・Markdown）として公開できるため、GitHub Pages との相性が抜群です。GitHub アカウントさえあれば追加費用なしで公開できます。
 
+<figure class="diagram">
+  <iframe src="../../diagrams/tutorial-03.html" title="GitHub Pages への公開フロー" loading="lazy"></iframe>
+  <figcaption>図: GitHub Pages への公開フロー — push から Actions の自動ビルド・デプロイまで</figcaption>
+</figure>
+
 ## 公開の流れ（GitHub Actions 利用）
 
 1. リポジトリを作成（例: `watanabe3tipapa/portolan-sandbox`）

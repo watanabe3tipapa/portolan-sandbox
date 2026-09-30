@@ -16,6 +16,11 @@ pubDate: 2026-09-11
 
 数十秒後、AI は**出典付きの評価結果**を出力しました。
 
+<figure class="diagram">
+  <iframe src="../../diagrams/helsinki-demo.html" title="OGC Connect Helsinki デモのワークフロー" loading="lazy"></iframe>
+  <figcaption>図: OGC Connect Helsinki デモ — AI エージェントがデータを移動させず各ストレージを直接参照する流れ</figcaption>
+</figure>
+
 ## ポイント：データはどこにも移動していない
 
 重要なのは、データがどこかに集約されていたわけではない点です。エージェントはフィンランド国土調査院やコペルニクスプログラムなど、各機関が管理するストレージのデータを**直接参照**していました。

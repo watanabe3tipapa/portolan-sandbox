@@ -11,6 +11,11 @@ pubDate: 2026-09-11
 
 Colab 上に**ローカル LLM（Ollama）**を構築すれば、モデルとデータが同じマシンにあり、外部へ送信されません。Google アカウントだけで、オープンモデルを使った解析が完結します。
 
+<figure class="diagram">
+  <iframe src="../../diagrams/tutorial-05.html" title="ローカル LLM でデータ解析するデータフロー" loading="lazy"></iframe>
+  <figcaption>図: ローカル LLM でのデータ解析フロー — GeoParquet の読み込みから回答まで、外部送信なしで完結</figcaption>
+</figure>
+
 ## Ollama とは
 
 Ollama はローカルで LLM を実行するためのツールです。モデルをダウンロードし、`ollama serve` で API サーバーを立ち上げれば、`curl` や Python から呼び出せるようになります。
