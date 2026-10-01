@@ -83,12 +83,12 @@ npm run build
 - `portolan-lp/` — ASTRO-based landing page
   - `src/content/tutorial/` — tutorial articles (00–05)
   - `src/content/feature/` — case study articles (5)
-  - `public/diagrams/` — archify diagrams (self-contained HTML, 11)
-- `.archify/` — archify diagram sources (body / candidate JSON and final HTML)
-- `.agents/skills/archify/` — the archify skill itself
+  - `public/diagrams/` — diagrams (self-contained HTML, 11)
 - `.github/workflows/deploy.yml` — GitHub Pages auto-deploy workflow
 - `README.md` / `README_en.md` — this documentation (Japanese / English)
 - `LICENSE` — MIT License
+
+Note: the archify tool (`.agents/`) and its working directory (`.archify/`) are excluded via `.gitignore`. Only the published artifacts in `portolan-lp/public/diagrams/` are committed.
 
 ---
 

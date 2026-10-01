@@ -85,12 +85,12 @@ npm run build
 - portolan-lp/ — ASTRO 製ランディングページ
   - src/content/tutorial/ — チュートリアル記事（00〜05）
   - src/content/feature/ — 事例記事（5 本）
-  - public/diagrams/ — archify 図（自己完結型 HTML、11 枚）
-- .archify/ — archify 図のソース（body / candidate JSON と最終 HTML）
-- .agents/skills/archify/ — archify スキル本体
+  - public/diagrams/ — 構成図（自己完結型 HTML、11 枚）
 - .github/workflows/deploy.yml — GitHub Pages 自動デプロイ用ワークフロー
 - README.md / README_en.md — 本ドキュメント（日本語・英語）
 - LICENSE — MIT ライセンス
+
+※ 図の生成に使う archify ツール本体（`.agents/`）と作業領域（`.archify/`）は `.gitignore` で管理対象外です。公開する成果物 `portolan-lp/public/diagrams/` のみをコミットしています。
 
 ---
 
