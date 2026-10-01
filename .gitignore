@@ -3,3 +3,8 @@
 
 # logs
 *.log
+
+# archify (ローカル作業領域 / ツール本体)
+# 図の成果物（公開用 HTML）は portolan-lp/public/diagrams/ に配置してコミットする
+.agents/
+.archify/
