@@ -114,6 +114,8 @@ For details, see the repository's Issues page.
 - GitHub: https://github.com/watanabe3tipapa/portolan-sandbox
 - LP (GitHub Pages): https://watanabe3tipapa.github.io/portolan-sandbox/
 
+Note: this LP is deployed as a GitHub Pages **project site** (`base: /portolan-sandbox/`), so **always include `/portolan-sandbox/` when you share or quote a URL**. Anything directly under `https://watanabe3tipapa.github.io/` is served by a different site and returns 404. The site also ships `/portolan-sandbox/404.html`, which guides visitors from an unknown path inside this project to the right page.
+
 ---
 
 ## License

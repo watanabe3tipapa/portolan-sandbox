@@ -25,6 +25,7 @@ portolan-sandbox 開発メモ。「AI が直接読める空間インフラ Porto
 5. **特集コーナーはコンテンツコレクション(`feature`)で管理**。Google Maps×OSM 連携・共通プロトコル・実証デモ・Colab MCP server を収録
 6. README は okf-seedling に倣って **日英 2 版**(メインは日本語)
 7. **ライセンスは MIT**。LICENSE ファイルをリポジトリ配布(okf-seedling と同形式)
+8. **共有・引用する URL には必ず `/portolan-sandbox/` を付ける**。プロジェクトサイト(`base: /portolan-sandbox/`)のため、ドメイン直下の URL は別サイト管辖で 404 になる
 
 ## 技術制約(検証済み)
 
@@ -305,3 +306,12 @@ LP に archify 図(全 11: tutorial 6 + feature 5)を埋め込み、総点検を
 - 接頭辞を省いたアクセス(`/poi-search` など)を検出し、正しい URL への移動リンクを前面表示(リンク先とラベルは `define:vars` で渡し、DOM は `textContent` と属性で組み立てる)
 - 検証: ビルド 17 ページ。Playwright で `/poi-search/`・`/poi-search`(末尾スラッシュ無し)は誘導リンク表示、`/nope/` は非表示、console / page error 0、横スクロールなし
 - 制約: ドメイン直下の 404(例 `https://watanabe3tipapa.github.io/poi-search/`)は別のサイトの 404 が返るため、このページでは拾えない。正しい URL は `https://watanabe3tipapa.github.io/portolan-sandbox/poi-search/`
+
+## 決定: 共有時の URL には必ず `/portolan-sandbox/` を付ける — 2026-10-04
+
+プロジェクトサイト(`base: /portolan-sandbox/`)なので、ドメイン直下の短い URL は無効。共有・引用時の URL には必ず接頭辞を含める運用とする。
+
+- 決定事項 8 に追記(決定の記録として保持)
+- 運用: README 日英 2 種の「連絡先 / 公開サイト」に注意書きを追加、`/poi-search/` のページと `feature/poi-search-demo` の記事に絶対 URL を明記
+- `poi-search.astro` は `new URL(BASE_URL + 'poi-search/', Astro.site)` で共有用 URL を組み立てて表示(ハードコードしない)
+- 補足: `404.html` が拾えないのはドメイン直下の 404 だけ(別サイトの管理領域)。プロジェクト内の誤りは `/portolan-sandbox/404.html` が誘導する

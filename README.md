@@ -116,6 +116,8 @@ npm run build
 - GitHub: https://github.com/watanabe3tipapa/portolan-sandbox
 - LP (GitHub Pages): https://watanabe3tipapa.github.io/portolan-sandbox/
 
+※ この LP は GitHub Pages のプロジェクトサイト(`base: /portolan-sandbox/`)なので、**共有・引用するときの URL は必ず `/portolan-sandbox/` を付けてください**。`https://watanabe3tipapa.github.io/` 直下の URL は別のサイトが公開中のため 404 になります。ページ内には `/portolan-sandbox/404.html` があり、项目内の誤ったパスは正しいページへ誘導します。
+
 ---
 
 ## ライセンス

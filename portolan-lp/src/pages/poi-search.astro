@@ -1,6 +1,9 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import PoiSearch from '../components/PoiSearch.astro';
+
+// 共有・引用されやすい完全な URL をページ内に明示する（base 接頭辞が落ちるのを防ぐ）
+const shareUrl = new URL(`${import.meta.env.BASE_URL}poi-search/`, Astro.site).href;
 ---
 
 <Layout
@@ -22,7 +25,11 @@ import PoiSearch from '../components/PoiSearch.astro';
 				OpenPOI API（Overture Maps ＋ 食品営業許可・届出オープンデータ 約337万件）を、ブラウザの
 				<code>fetch</code> で直接検索します。認証・APIキー・サーバーは不要です。
 			</p>
-			<ul class="points">
+			<p class="share">
+			共有するときは、この URL をそのまま使ってください（GitHub Pages のプロジェクトサイトなので接頭辞が必要です）:
+			<code>{shareUrl}</code>
+		</p>
+		<ul class="points">
 				<li>キーワード検索（<code>/v1/search</code>）</li>
 				<li>現在地から探す（<code>center=lng,lat</code> ＋ 半径）</li>
 				<li>入力補完（<code>/v1/suggest</code>）</li>
@@ -148,6 +155,15 @@ import PoiSearch from '../components/PoiSearch.astro';
 
 	.lead {
 		font-weight: 700;
+	}
+
+	.share {
+		margin: 0.6rem 0 0;
+		font-size: 0.85rem;
+	}
+
+	.share code {
+		word-break: break-all;
 	}
 
 	.points {
