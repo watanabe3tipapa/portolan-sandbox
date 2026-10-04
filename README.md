@@ -5,7 +5,7 @@
 portolan-sandbox は、オープン仕様「Portolan」を身近に使えるようにするための手法を開拓する実験リポジトリです。Google アカウントだけで認証・デプロイまで対応できる構成を目指し、LP・構想メモ・要約記事をひとまとめに管理します。
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-v0.1.1-blue.svg)](https://github.com/watanabe3tipapa/portolan-sandbox/releases)
+[![Version](https://img.shields.io/badge/version-v0.1.2-blue.svg)](https://github.com/watanabe3tipapa/portolan-sandbox/releases)
 [![GitHub](https://img.shields.io/github/issues/watanabe3tipapa/portolan-sandbox.svg)](https://github.com/watanabe3tipapa/portolan-sandbox/issues)
 [![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-live-blue.svg)](https://watanabe3tipapa.github.io/portolan-sandbox/)
 
@@ -17,7 +17,7 @@ portolan-sandbox は、オープン仕様「Portolan」を身近に使えるよ�
 
 Portolan は、地理空間データを「AI が直接読める形で、出版者が管理するストレージに置いたまま公開する」ためのオープン仕様です。本リポジトリは、この Portolan の啓発活動と具体的な活用方法の開拓を目的としています。
 
-LP（portolan-lp/）にはチュートリアル 6 本（Portolan の全体像〜ローカル LLM での解析）と事例 5 本（Colab MCP server / Google Maps×OpenStreetMap / 共通プロトコル / OGC Connect Helsinki デモ / Google×GitHub の両立ワークフロー）を掲載しています。各記事には、システム構成・処理フローを可視化した archify 図（自己完結型 HTML）を埋め込んでいます。
+LP（portolan-lp/）にはチュートリアル 6 本（Portolan の全体像〜ローカル LLM での解析）と事例 6 本（Colab MCP server / Google Maps×OpenStreetMap / 共通プロトコル / OGC Connect Helsinki デモ / Google×GitHub の両立ワークフロー / OpenPOI API 検索デモ）を掲載しています。各記事には、システム構成・処理フローを可視化した archify 図（自己完結型 HTML）を埋め込んでいます。
 
 主な取り組み:
 
@@ -38,7 +38,7 @@ LP（portolan-lp/）にはチュートリアル 6 本（Portolan の全体像〜
 ## 主な特徴
 
 - ASTRO 製 LP と GitHub Pages への自動デプロイ（main への push で公開）
-- チュートリアル 6 本 + 事例 5 本の記事コンテンツ
+- チュートリアル 6 本 + 事例 6 本の記事コンテンツ
 - 全記事に archify 構成図（`.html`）を iframe で埋め込み
 - 構想・アイデアの一元管理（DEV-MEMO.md）
 - ゆくゆくは Google アカウントだけで完結するデプロイ構成を目標に検討
@@ -84,8 +84,9 @@ npm run build
 - Portolan_要約.html — GeoAI 第16回「地図データを配る」時代の終わり——の要約記事
 - portolan-lp/ — ASTRO 製ランディングページ
   - src/content/tutorial/ — チュートリアル記事（00〜05）
-  - src/content/feature/ — 事例記事（5 本）
-  - public/diagrams/ — 構成図（自己完結型 HTML、11 枚）
+  - src/content/feature/ — 事例記事（6 本）
+  - src/pages/poi-search.astro — 公開デモ（OpenPOI API 検索。`/poi-search/`）
+  - public/diagrams/ — 構成図（自己完結型 HTML、12 枚）
 - .github/workflows/deploy.yml — GitHub Pages 自動デプロイ用ワークフロー
 - README.md / README_en.md — 本ドキュメント（日本語・英語）
 - LICENSE — MIT ライセンス
@@ -125,4 +126,4 @@ MIT ライセンス — 詳細は [LICENSE](LICENSE) ファイルを参照して
 ## 開発・保守状態
 
 - リポジトリはアーカイブされていません。
-- 最終更新: 2026-09-30 (本ドキュメント時点 / v0.1.1)
+- 最終更新: 2026-10-04 (本ドキュメント時点 / v0.1.2)

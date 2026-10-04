@@ -4,7 +4,7 @@ import { getCollection } from 'astro:content';
 
 const features = (await getCollection('feature')).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 const heroTitle = '特集';
-const heroLead = 'Google Maps / OpenStreetMap とのデータ連携や、共通プロトコルの用例、実証デモの解説をお届けします。';
+const heroLead = 'Google Maps / OpenStreetMap とのデータ連携、共通プロトコルの用例、そして認証なしで動く POI 検索デモの解説をお届けします。';
 const colors = ['pink', 'sky', 'mint', 'lemon', 'pink'];
 ---
 

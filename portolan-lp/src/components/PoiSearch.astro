@@ -1,0 +1,846 @@
+---
+interface Props {
+	apiBase?: string;
+	limit?: number;
+	radius?: number;
+}
+
+const { apiBase = 'https://api.openpoiapi.com/v1', limit = 20, radius = 1000 } = Astro.props;
+---
+
+<section
+	class="poi"
+	data-poi-search
+	data-api={apiBase}
+	data-limit={String(limit)}
+	data-radius={String(radius)}
+>
+	<form class="search" data-search novalidate>
+		<div class="field">
+			<label for="poi-query">施設名・業態・地名</label>
+			<div class="input-wrap">
+				<input
+					id="poi-query"
+					type="search"
+					name="q"
+					autocomplete="off"
+					placeholder="例：ラーメン、スターバックス、世田谷区"
+					aria-describedby="poi-query-help"
+				/>
+				<span class="ghost" data-ghost aria-hidden="true"></span>
+			</div>
+			<p class="help" id="poi-query-help">
+				入力すると <code>/v1/suggest</code> で候補が出ています。複数語は OR 検索です。
+			</p>
+		</div>
+		<div class="actions">
+			<button type="submit" class="btn primary">検索</button>
+			<button type="button" class="btn" data-nearme>現在地から探す</button>
+		</div>
+		<ul class="suggest" data-suggest hidden></ul>
+		<div class="vocab" data-vocab hidden></div>
+	</form>
+
+	<p class="status" data-status role="status" aria-live="polite"></p>
+
+	<div class="filters" data-filters hidden></div>
+
+	<div class="split">
+		<ol class="results" data-results></ol>
+		<div class="map-wrap">
+			<div class="map" data-map role="application" aria-label="検索結果の地図"></div>
+			<p class="map-note">地図タイル: &copy; OpenStreetMap contributors</p>
+		</div>
+	</div>
+
+	<div class="export" data-export hidden>
+		<p class="export-lead">Portolan 形式で書き出す（各レコードの <code>licenses</code> / <code>attributions</code> を保持）</p>
+		<div class="export-actions">
+			<button type="button" class="btn small" data-export-collection>collection.json</button>
+			<button type="button" class="btn small" data-export-geojson>items.geojson</button>
+		</div>
+	</div>
+
+	<p class="attribution">
+		出典: <a href="https://openpoiapi.com/attribution.html" rel="noopener">OpenPOI API</a>（Overture Maps 由来 約249万件 +
+		食品営業許可・届出オープンデータ 約88万件）。結果ごとのライセンスは各項目の表示と書き出しファイルに保持しています。
+	</p>
+</section>
+
+<script>
+	function initPoiSearch(root) {
+		const API = root.dataset.api || 'https://api.openpoiapi.com/v1';
+		const LIMIT = Number(root.dataset.limit || 20);
+		const RADIUS = Number(root.dataset.radius || 1000);
+
+		const form = root.querySelector('[data-search]');
+		const input = root.querySelector('#poi-query');
+		const ghost = root.querySelector('[data-ghost]');
+		const suggestList = root.querySelector('[data-suggest]');
+		const vocabBox = root.querySelector('[data-vocab]');
+		const statusLine = root.querySelector('[data-status]');
+		const filters = root.querySelector('[data-filters]');
+		const list = root.querySelector('[data-results]');
+		const mapEl = root.querySelector('[data-map]');
+		const exportBox = root.querySelector('[data-export]');
+
+		const state = {
+			mode: 'keyword',
+			label: '',
+			note: '',
+			center: null,
+			results: [],
+			category: null,
+		};
+
+		let map = null;
+		let markerLayer = null;
+		let suggestTimer = 0;
+
+		const text = (value) => (value === null || value === undefined ? '' : String(value));
+		const union = (arrays) => Array.from(new Set(arrays)).filter(Boolean);
+
+		function normalize(item) {
+			const lat = Number(item.lat);
+			const lng = Number(item.lng);
+			return {
+				name: text(item.name),
+				nameKana: text(item.name_kana),
+				address: text(item.address),
+				prefecture: text(item.prefecture),
+				city: text(item.city),
+				category: text(item.category) || 'unknown',
+				businessType: text(item.business_type),
+				level: item.level === null || item.level === undefined || item.level === '' ? null : item.level,
+				source: text(item.source),
+				lat: Number.isFinite(lat) ? lat : null,
+				lng: Number.isFinite(lng) ? lng : null,
+				licenses: Array.isArray(item.licenses) ? item.licenses.map(text) : [],
+				attributions: Array.isArray(item.attributions) ? item.attributions.map(text) : [],
+			};
+		}
+
+		const placeLabel = (r) => union([r.prefecture, r.city]).join('');
+		const displayName = (r) => r.name || r.address || '（名称不明）';
+		const hasCoords = (r) => r.lat !== null && r.lng !== null;
+		const visible = () =>
+			state.category ? state.results.filter((r) => r.category === state.category) : state.results;
+
+		function setStatus(message, kind) {
+			statusLine.textContent = message || '';
+			statusLine.dataset.kind = kind || '';
+		}
+
+		async function getJson(url) {
+			let response;
+			try {
+				response = await fetch(url, { headers: { Accept: 'application/json' } });
+			} catch {
+				throw new Error('ネットワークに接続できませんでした（レート超過時は CORS エラーとして表示されます）');
+			}
+			if (response.status === 429) {
+				throw new Error('OpenPOI API のレート上限を超過しました（全体 200 req/s・バースト 600 req/s）。少し待って再試行してください。');
+			}
+			if (response.status === 400) {
+				const body = await response.json().catch(() => ({}));
+				throw new Error(text(body.error) || 'クエリが不正です（center は lng,lat の順で指定します）');
+			}
+			if (!response.ok) throw new Error(`検索に失敗しました（HTTP ${response.status}）`);
+			return response.json();
+		}
+
+		// --- 検索 ---
+
+		async function runKeywordSearch() {
+			const q = input.value.trim();
+			if (!q) {
+				setStatus('キーワードを入力してください', 'error');
+				return;
+			}
+			await run(`/search?q=${encodeURIComponent(q)}&limit=${LIMIT}`, {
+				mode: 'keyword',
+				label: q,
+				center: null,
+				note: `キーワード「${q}」`,
+			});
+		}
+
+		function runNearMeSearch() {
+			if (!navigator.geolocation) {
+				setStatus('このブラウザは位置情報を利用できません', 'error');
+				return;
+			}
+			setStatus('位置情報を取得しています…', 'busy');
+			navigator.geolocation.getCurrentPosition(
+				(position) => {
+					const lat = position.coords.latitude;
+					const lng = position.coords.longitude;
+					run(`/search?center=${lng},${lat}&radius=${RADIUS}&limit=${LIMIT}`, {
+						mode: 'near',
+						label: `現在地 ${lat.toFixed(4)}, ${lng.toFixed(4)}`,
+						center: { lat, lng },
+						note: `現在地の周囲 ${RADIUS}m（center は lng,lat の順で指定）`,
+					});
+				},
+				(error) => {
+					const reason =
+						error.code === 1 ? '位置情報の利用が拒否されました' : `位置情報を取得できませんでした（${error.message}）`;
+					setStatus(reason, 'error');
+				},
+				{ enableHighAccuracy: false, timeout: 10000, maximumAge: 60000 },
+			);
+		}
+
+		async function run(path, next) {
+			setStatus('検索しています…', 'busy');
+			hideSuggest();
+			try {
+				const data = await getJson(API + path);
+				state.mode = next.mode;
+				state.label = next.label;
+				state.note = next.note;
+				state.center = next.center;
+				state.category = null;
+				state.results = Array.isArray(data.results) ? data.results.map(normalize) : [];
+				render();
+			} catch (error) {
+				state.results = [];
+				state.note = '';
+				render();
+				setStatus(error instanceof Error ? error.message : '検索に失敗しました', 'error');
+			}
+		}
+
+		// --- 入力補完 ---
+
+		function scheduleSuggest() {
+			window.clearTimeout(suggestTimer);
+			const q = input.value.trim();
+			hideSuggest();
+			if (q.length < 2) return;
+			suggestTimer = window.setTimeout(async () => {
+				try {
+					const data = await getJson(`${API}/suggest?q=${encodeURIComponent(q)}&limit=8`);
+					showSuggest(data, q);
+				} catch {
+					hideSuggest();
+				}
+			}, 250);
+		}
+
+		function showSuggest(data, q) {
+			const suggestions = Array.isArray(data.suggestions) ? data.suggestions : [];
+			const vocabulary = Array.isArray(data.vocabulary) ? data.vocabulary : [];
+
+			suggestList.replaceChildren();
+			for (const item of vocabulary) {
+				const chip = document.createElement('button');
+				chip.type = 'button';
+				chip.className = 'vocab-chip';
+				chip.textContent = `${vocabularyType(item.type)}: ${text(item.label)}`;
+				chip.addEventListener('click', () => {
+					input.value = text(item.query);
+					input.focus();
+					runKeywordSearch();
+				});
+				vocabBox.append(chip);
+			}
+			vocabBox.hidden = vocabulary.length === 0;
+
+			for (const raw of suggestions) {
+				const item = normalize(raw);
+				const li = document.createElement('li');
+				const button = document.createElement('button');
+				button.type = 'button';
+				button.className = 'suggest-item';
+				const title = document.createElement('span');
+				title.className = 'suggest-name';
+				title.textContent = displayName(item);
+				const address = document.createElement('span');
+				address.className = 'suggest-address';
+				address.textContent = text(raw.address) || placeLabel(item);
+				button.append(title, address);
+				button.addEventListener('click', () => {
+					input.value = item.name;
+					hideSuggest();
+					runKeywordSearch();
+				});
+				li.append(button);
+				suggestList.append(li);
+			}
+			suggestList.hidden = suggestions.length === 0;
+
+			const completion = text(data.completion);
+			if (completion.startsWith(q) && completion.length > q.length) {
+				ghost.replaceChildren();
+				const matched = document.createElement('span');
+				matched.textContent = q;
+				const rest = document.createElement('span');
+				rest.textContent = completion.slice(q.length);
+				ghost.append(matched, rest);
+			} else {
+				ghost.replaceChildren();
+			}
+		}
+
+		function hideSuggest() {
+			suggestList.hidden = true;
+			suggestList.replaceChildren();
+			vocabBox.hidden = true;
+			vocabBox.replaceChildren();
+			ghost.replaceChildren();
+		}
+
+		const vocabularyType = (type) =>
+			({ category: '業種', brand: 'ブランド', place: '地名' })[text(type)] || '候補';
+
+		// --- 描画 ---
+
+		function render() {
+			const rows = visible();
+			const note = state.note;
+
+			filters.replaceChildren();
+			const counts = new Map();
+			for (const r of state.results) counts.set(r.category, (counts.get(r.category) || 0) + 1);
+			if (counts.size > 1) {
+				const label = document.createElement('span');
+				label.className = 'filter-label';
+				label.textContent = '絞り込み';
+				filters.append(label);
+				for (const [category, count] of Array.from(counts).sort((a, b) => b[1] - a[1])) {
+					const chip = document.createElement('button');
+					chip.type = 'button';
+					chip.className = 'filter-chip';
+					chip.dataset.active = String(state.category === category);
+					chip.textContent = `${category} (${count})`;
+					chip.addEventListener('click', () => {
+						state.category = state.category === category ? null : category;
+						render();
+					});
+					filters.append(chip);
+				}
+			}
+			filters.hidden = counts.size <= 1;
+
+			list.replaceChildren();
+			for (const record of rows) list.append(renderRow(record));
+
+			drawMarkers(rows);
+
+			exportBox.hidden = rows.length === 0;
+
+			if (state.results.length === 0) {
+				setStatus(note ? `${note}: 該当なし` : '検索すると結果がここに表示されます', note ? 'empty' : '');
+			} else if (rows.length === 0) {
+				setStatus(`${note}: ${state.results.length} 件（絞り込みで 0 件）`, 'empty');
+			} else {
+				setStatus(`${note}: ${rows.length} 件 / 全 ${state.results.length} 件`, 'ok');
+			}
+		}
+
+		function renderRow(record) {
+			const li = document.createElement('li');
+			li.className = 'result';
+
+			const name = document.createElement('p');
+			name.className = 'result-name';
+			name.textContent = displayName(record);
+
+			const meta = document.createElement('p');
+			meta.className = 'result-meta';
+			meta.textContent = union([placeLabel(record), record.category]).filter(Boolean).join(' / ');
+
+			li.append(name);
+			if (record.address) {
+				const address = document.createElement('p');
+				address.className = 'result-address';
+				address.textContent = record.address;
+				li.append(address);
+			}
+			li.append(meta);
+
+			const licence = document.createElement('p');
+			licence.className = 'result-license';
+			licence.textContent = union([record.source, ...record.licenses]).filter(Boolean).join(' / ');
+			li.append(licence);
+
+			if (hasCoords(record)) {
+				li.tabIndex = 0;
+				li.addEventListener('click', () => focusRecord(record));
+				li.addEventListener('keydown', (event) => {
+					if (event.key === 'Enter') focusRecord(record);
+				});
+			} else {
+				li.classList.add('no-coord');
+				const note = document.createElement('p');
+				note.className = 'result-license';
+				note.textContent = '座標なし（地図・書き出し対象から除外）';
+				li.append(note);
+			}
+
+			return li;
+		}
+
+		// --- 地図 ---
+
+		function ensureMap() {
+			if (map) return map;
+			if (typeof L === 'undefined') {
+				setStatus('地図ライブラリを読み込めませんでした（Leaflet の CDN を確認してください）', 'error');
+				return null;
+			}
+			map = L.map(mapEl).setView([43.0618, 141.3545], 12);
+			L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+				maxZoom: 19,
+				attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+			}).addTo(map);
+			window.addEventListener('resize', () => map.invalidateSize());
+			return map;
+		}
+
+		function drawMarkers(rows) {
+			const current = ensureMap();
+			if (!current) return;
+			if (markerLayer) markerLayer.remove();
+			markerLayer = L.layerGroup().addTo(current);
+			const points = [];
+			for (const record of rows) {
+				if (!hasCoords(record)) continue;
+				const latLng = [record.lat, record.lng];
+				points.push(latLng);
+				L.marker(latLng)
+					.bindPopup(popupNode(record))
+					.addTo(markerLayer);
+			}
+			if (points.length > 0) current.fitBounds(L.latLngBounds(points).pad(0.15));
+			window.requestAnimationFrame(() => current.invalidateSize());
+		}
+
+		function popupNode(record) {
+			const wrap = document.createElement('div');
+			const name = document.createElement('strong');
+			name.textContent = displayName(record);
+			wrap.append(name);
+			const where = document.createElement('div');
+			where.textContent = union([placeLabel(record), record.address]).filter(Boolean).join(' ');
+			if (where.textContent) wrap.append(where);
+			return wrap;
+		}
+
+		function focusRecord(record) {
+			const current = ensureMap();
+			if (!current || !hasCoords(record)) return;
+			current.setView([record.lat, record.lng], Math.max(current.getZoom(), 15));
+		}
+
+		// --- Portolan 形式の書き出し ---
+
+		function download(filename, data) {
+			const blob = new Blob([`${JSON.stringify(data, null, 2)}\n`], { type: 'application/json' });
+			const url = URL.createObjectURL(blob);
+			const anchor = document.createElement('a');
+			anchor.href = url;
+			anchor.download = filename;
+			anchor.click();
+			URL.revokeObjectURL(url);
+		}
+
+		function slug() {
+			const base = state.mode === 'near' ? 'near-me' : state.label;
+			const normalized = base
+				.replace(/[^\p{L}\p{N}]+/gu, '-')
+				.replace(/^-+|-+$/g, '')
+				.slice(0, 40);
+			return normalized || 'openpoi';
+		}
+
+		function buildCollection() {
+			const rows = visible();
+			const points = rows.filter(hasCoords);
+			const bbox =
+				points.length > 0
+					? [
+							[
+								Math.min(...points.map((r) => r.lng)),
+								Math.min(...points.map((r) => r.lat)),
+								Math.max(...points.map((r) => r.lng)),
+								Math.max(...points.map((r) => r.lat)),
+							],
+						]
+					: [];
+			return {
+				stac_version: '1.0.0',
+				type: 'Collection',
+				id: `openpoi-${slug()}`,
+				description: `OpenPOI API ${state.mode === 'near' ? '近傍検索' : 'キーワード検索'}「${state.label}」の結果 ${rows.length} 件`,
+				license: 'various',
+				extent: { spatial: { bbox } },
+				summaries: {
+					languages: ['ja'],
+					categories: union(rows.map((r) => r.category)),
+				},
+				providers: [
+					{
+						name: 'OpenPOI API',
+						roles: ['producer'],
+						url: 'https://openpoiapi.com/attribution.html',
+					},
+				],
+				links: [
+					{ rel: 'items', type: 'application/geo+json', href: 'items.geojson' },
+					{ rel: 'license', type: 'text/html', href: 'https://openpoiapi.com/attribution.html' },
+					{ rel: 'via', type: 'text/html', href: `${window.location.origin}${window.location.pathname}` },
+				],
+			};
+		}
+
+		function buildFeatureCollection() {
+			return {
+				type: 'FeatureCollection',
+				features: visible()
+					.filter(hasCoords)
+					.map((record) => ({
+						type: 'Feature',
+						geometry: { type: 'Point', coordinates: [record.lng, record.lat] },
+						properties: {
+							name: record.name,
+							name_kana: record.nameKana,
+							address: record.address,
+							prefecture: record.prefecture,
+							city: record.city,
+							category: record.category,
+							business_type: record.businessType,
+							level: record.level,
+							source: record.source,
+							licenses: record.licenses,
+							attributions: record.attributions,
+						},
+					})),
+			};
+		}
+
+		// --- イベント ---
+
+		form.addEventListener('submit', (event) => {
+			event.preventDefault();
+			runKeywordSearch();
+		});
+		root.querySelector('[data-nearme]').addEventListener('click', runNearMeSearch);
+		input.addEventListener('input', scheduleSuggest);
+		input.addEventListener('blur', () => window.setTimeout(hideSuggest, 150));
+		input.addEventListener('keydown', (event) => {
+			if (event.key === 'Escape') hideSuggest();
+		});
+		root.querySelector('[data-export-collection]').addEventListener('click', () => {
+			download(`openpoi-${slug()}-collection.json`, buildCollection());
+		});
+		root.querySelector('[data-export-geojson]').addEventListener('click', () => {
+			download(`openpoi-${slug()}-items.geojson`, buildFeatureCollection());
+		});
+
+		render();
+	}
+
+	document.querySelectorAll('[data-poi-search]').forEach(initPoiSearch);
+</script>
+
+<style>
+	.poi {
+		display: block;
+	}
+
+	.search {
+		display: grid;
+		gap: 1rem;
+		padding: 1.2rem;
+		background: var(--nb-bg);
+		border: var(--nb-border);
+		box-shadow: var(--nb-shadow);
+	}
+
+	.field label {
+		display: block;
+		font-weight: 900;
+		margin-bottom: 0.4rem;
+	}
+
+	.input-wrap {
+		position: relative;
+	}
+
+	input[type='search'] {
+		width: 100%;
+		padding: 0.7rem 0.9rem;
+		font: inherit;
+		font-weight: 700;
+		color: inherit;
+		background: #fff;
+		border: var(--nb-border);
+	}
+
+	.ghost {
+		position: absolute;
+		inset: 0 auto 0 1px;
+		display: flex;
+		align-items: center;
+		padding: 0 0.9rem;
+		font-weight: 700;
+		pointer-events: none;
+		color: var(--nb-fg-light);
+		opacity: 0.75;
+	}
+
+	.ghost span:first-child {
+		visibility: hidden;
+	}
+
+	.help {
+		margin: 0.4rem 0 0;
+		font-size: 0.85rem;
+		color: var(--nb-fg-light);
+	}
+
+	.help code,
+	.export-lead code {
+		background: var(--nb-lavender);
+		padding: 0.1rem 0.35rem;
+		font-weight: 700;
+	}
+
+	.actions {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.6rem;
+	}
+
+	.btn {
+		font: inherit;
+		font-weight: 900;
+		padding: 0.65rem 1.2rem;
+		background: #fff;
+		color: inherit;
+		border: var(--nb-border);
+		box-shadow: 3px 3px 0 var(--nb-ink);
+		cursor: pointer;
+		transition:
+			transform 0.1s ease,
+			box-shadow 0.1s ease;
+	}
+
+	.btn:hover {
+		transform: translate(-1px, -1px);
+		box-shadow: 4px 4px 0 var(--nb-ink);
+	}
+
+	.btn:active {
+		transform: translate(2px, 2px);
+		box-shadow: 1px 1px 0 var(--nb-ink);
+	}
+
+	.btn.primary {
+		background: var(--nb-mint);
+	}
+
+	.btn.small {
+		padding: 0.45rem 0.9rem;
+		font-size: 0.9rem;
+	}
+
+	.suggest {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		border: var(--nb-border);
+		background: #fff;
+		max-height: 260px;
+		overflow-y: auto;
+	}
+
+	.suggest-item {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		width: 100%;
+		font: inherit;
+		text-align: left;
+		padding: 0.5rem 0.8rem;
+		background: transparent;
+		border: 0;
+		border-bottom: 1px solid #ddd;
+		cursor: pointer;
+	}
+
+	.suggest-item:hover,
+	.suggest-item:focus-visible {
+		background: var(--nb-lemon);
+	}
+
+	.suggest-name {
+		font-weight: 700;
+	}
+
+	.suggest-address {
+		font-size: 0.82rem;
+		color: var(--nb-fg-light);
+	}
+
+	.vocab {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.4rem;
+	}
+
+	.vocab-chip,
+	.filter-chip {
+		font: inherit;
+		font-size: 0.85rem;
+		font-weight: 700;
+		padding: 0.3rem 0.7rem;
+		background: var(--nb-lavender);
+		border: var(--nb-border);
+		cursor: pointer;
+	}
+
+	.vocab-chip:hover,
+	.filter-chip[data-active='true'] {
+		background: var(--nb-lemon);
+	}
+
+	.status {
+		margin: 1rem 0 0;
+		font-weight: 700;
+	}
+
+	.status[data-kind='error'] {
+		color: #b3261e;
+	}
+
+	.status[data-kind='empty'] {
+		color: var(--nb-fg-light);
+	}
+
+	.status[data-kind='busy'] {
+		color: var(--nb-fg-light);
+	}
+
+	.filters {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.4rem;
+		margin-top: 1rem;
+	}
+
+	.filter-label {
+		font-size: 0.85rem;
+		font-weight: 900;
+	}
+
+	.split {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+		gap: 1.5rem;
+		margin-top: 1.2rem;
+		align-items: start;
+	}
+
+	@media (max-width: 860px) {
+		.split {
+			grid-template-columns: minmax(0, 1fr);
+		}
+	}
+
+	.results {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: grid;
+		gap: 0.8rem;
+		max-height: 520px;
+		overflow-y: auto;
+	}
+
+	.result {
+		padding: 0.8rem 1rem;
+		background: #fff;
+		border: var(--nb-border);
+		box-shadow: 2px 2px 0 var(--nb-ink);
+		cursor: pointer;
+	}
+
+	.result:focus-visible {
+		outline: 3px solid var(--nb-ink);
+		outline-offset: 2px;
+	}
+
+	.result.no-coord {
+		cursor: default;
+		background: var(--nb-lavender);
+	}
+
+	.result p {
+		margin: 0;
+	}
+
+	.result-name {
+		font-weight: 900;
+	}
+
+	.result-meta,
+	.result-address {
+		font-size: 0.88rem;
+		color: var(--nb-fg-light);
+	}
+
+	.result-license {
+		margin-top: 0.4rem !important;
+		font-size: 0.75rem;
+		font-weight: 700;
+		color: var(--nb-fg-light);
+		opacity: 0.85;
+	}
+
+	.map-wrap {
+		position: sticky;
+		top: 1rem;
+	}
+
+	.map {
+		height: 420px;
+		background: #fff;
+		border: var(--nb-border);
+		box-shadow: var(--nb-shadow);
+	}
+
+	.map-note {
+		margin: 0.4rem 0 0;
+		font-size: 0.75rem;
+		color: var(--nb-fg-light);
+	}
+
+	.export {
+		margin-top: 1.5rem;
+		padding: 1rem 1.2rem;
+		background: var(--nb-sky);
+		border: var(--nb-border);
+		box-shadow: var(--nb-shadow);
+	}
+
+	.export-lead {
+		margin: 0 0 0.7rem;
+		font-weight: 700;
+	}
+
+	.export-actions {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.6rem;
+	}
+
+	.attribution {
+		margin-top: 1.2rem;
+		font-size: 0.8rem;
+		color: var(--nb-fg-light);
+	}
+</style>

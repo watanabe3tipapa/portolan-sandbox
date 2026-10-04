@@ -1,3 +1,15 @@
+---
+interface Props {
+	title?: string;
+	description?: string;
+}
+
+const {
+	title = 'Portolan - AIが直接読める空間インフラ',
+	description = '地理空間データをAIが直接読める形で公開するための新しいオープン仕様',
+} = Astro.props;
+---
+
 <!doctype html>
 <html lang="ja">
 	<head>
@@ -12,8 +24,8 @@
 			rel="stylesheet"
 		/>
 		<meta name="generator" content={Astro.generator} />
-		<title>Portolan - AIが直接読める空間インフラ</title>
-		<meta name="description" content="地理空間データをAIが直接読める形で公開するための新しいオープン仕様" />
+		<title>{title}</title>
+		<meta name="description" content={description} />
 	</head>
 	<body>
 		<slot />

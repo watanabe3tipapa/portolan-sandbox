@@ -14,7 +14,7 @@ portolan-sandbox 開発メモ。「AI が直接読める空間インフラ Porto
 - **Portolan という新しいオープン仕様を広めるためのランディングページ(LP)を GitHub Pages で公開**
 - **チュートリアル・特集コーナーを追加**し、「作って・公開するところまで」を学べるコンテンツを提供
 - **Google アカウントだけで**認証・デプロイまで完結させる構成を将来実現(構想)
-- 日英 2 言語の README でプロジェクトの入口を整える(現行 v0.1.0)
+- 日英 2 言語の README でプロジェクトの入口を整える(現行 v0.1.2)
 
 ## 決定事項
 
@@ -59,13 +59,16 @@ portolan-sandbox/                    ← GitHub Pages 公開元(リポジトリ)
     ├── astro.config.mjs             # site / base(GitHub Pages 用)・output: static
     ├── src/
     │   ├── content.config.ts        # コレクション定義(tutorial / feature、glob ローダー)
+    │   ├── components/
+    │   │   └── PoiSearch.astro      # 公開デモの検索 UI(Leaflet・補完・書き出し)
     │   ├── content/
-    │   │   ├── tutorial/            # 5 本(order 0〜4)
-    │   │   └── feature/             # 4 本
+    │   │   ├── tutorial/            # 6 本(order 0〜5)
+    │   │   └── feature/             # 6 本
     │   ├── layouts/
     │   │   └── Layout.astro         # 日本語ヘッダ・文字セット
     │   └── pages/
     │       ├── index.astro          # LP(ヒーロー・特徴・チュートリアル・特集・CTA)
+    │       ├── poi-search.astro     # 公開デモ(/poi-search/、OpenPOI API 検索)
     │       ├── tutorial/
     │       │   ├── index.astro      # 一覧(order 順)
     │       │   └── [...slug].astro  # 個別 + prev/next ナビ
@@ -94,6 +97,7 @@ frontmatter: `title` / `description` / `order`(number) / `pubDate`(date)
 
 | id | タイトル |
 |---|---|
+| poi-search-demo | ケーススタディ — OpenPOI API 検索デモ(認証なし・サーバーなし) |
 | colab-mcp-server | Colab MCP server に期待できる機能 |
 | gmaps-osm-interop | Google Maps × OpenStreetMap — データ連携 |
 | common-protocols | 共通プロトコルの用例 — STAC・GeoParquet・PMTiles |
@@ -119,6 +123,7 @@ frontmatter: `title` / `description` / `pubDate`(date)
 | M11 | Colab MCP 次段階 | deploy_to_github_pages / write_to_drive 追加、Pages へのMCP経由デプロイを実証 |
 | M12 | ローカル LLM 用例 | Ollama を Drive にマウントして解析するツール4種 + 実機検証(ask/geo_analyze) |
 | M13 | 両アカウント WF 記事 | tutorial 05-local-llm + feature google-github-workflow の新規追加 |
+| M14 | 公開デモ + 事例記事 | `/poi-search/`(OpenPOI API 検索・補完・地図・書き出し)+ feature poi-search-demo + archify 12 図目 |
 
 ## 実装メモ
 
@@ -255,3 +260,37 @@ LP に archify 図(全 11: tutorial 6 + feature 5)を埋め込み、総点検を
   - `tutorial-04`(図 JSON): 「必要部分」→「必要な部分」(tutorial-00 の表現に統一)
 - **検証方法**: 全 body/candidate に対し Python で機械スキャン(二重スペース・全角英数字・制御文字・中国語表現・表記揺れ等)。再生成した 2 図は candidate 再注入 → finalize 再実行(全ゲート pass)→ `public/diagrams/` に再コピー → `npm run build` ≠ 成功、preview + curl で全 11 記事・全 11 図が 200
 - **残作業**: ユーザー確認後にコミット・push(未実施)
+
+## 仕上げ(公開デモ): OpenPOI 検索デモ + archify 12 図目 + タイポチェック — 2026-10-04
+
+`/poi-search/` に公開デモを追加し、12 枚目の archify 図とケーススタディ記事(事例 6 本目)を作成した。
+
+- **方針**: Vue などの新規依存は増やさない(純 ASTRO + クライアント `<script>`)。Leaflet 1.9.4 は unpkg から SRI 付きで読み込む
+- **追加・変更したファイル**:
+  - `portolan-lp/src/components/PoiSearch.astro` — 検索 UI とロジック(新規)
+  - `portolan-lp/src/pages/poi-search.astro` — 公開ページ(パンくず・試し方・利用上の注意・出典)(新規)
+  - `portolan-lp/src/content/feature/poi-search-demo.md` — ケーススタディ(新規)
+  - `portolan-lp/public/diagrams/poi-search-demo.html` — 12 枚目の図(新規)
+  - `portolan-lp/src/layouts/Layout.astro` — `title` / `description` を任意 props に変更(既定値は従来どおり)
+  - `portolan-lp/src/pages/feature/index.astro` / `README.md` / `README_en.md` — 記事数・図数・デモページを追記
+- **機能**: キーワード検索 / 現在地検索(Geolocation)/ 入力補完(`/v1/suggest`)/ カテゴリ絞り込み / Leaflet 地図 / `collection.json` と GeoJSON の書き出し / 出典表示
+- **実測して見つけた落とし穴**( artigoにも記載):
+  - `center` は `lng,lat` の順。逆だと 400(エラーメッセージが理由を示してくれる)
+  - 1 文字の入力では補完が 0 件(2 文字なら全国展開で返る)
+  - Overture Maps 由来のレコードは `address`・`prefecture` が空文字、`name` も空のことがある
+  - `lat` / `lng` は `number | string` で、座標なしは空文字。`Number.isFinite()` で除外しないと `fitBounds` が壊れる
+  - 429 は CORS ヘッダを返さないため、ブラウザでは CORS エラーとして見える
+  - 検索のたびに `L.map()` を呼ぶと 2 回目以降で例外。Leaflet のインスタンスを保持してレイヤーを差し替える
+- **地図の初期表示**: 札幌市 `[43.0618, 141.3545]`(zoom 12)
+- **12 枚目の図**: workflow / `schema_version: 2` / `--quality showcase` / `meta.locale: ja` + `ja.json`(423 キー)。作業フォルダ `.archify/workflow-poi-search-demo-20261004-100455/`。初回 finalize は `workflow/unexpected-root` で fail したが、`dataset` も root なので `semanticChecks.allowedRoots` に追加して再実行し、validate / deliver / check / browser-check の全ゲート pass・診断 0 件。1440〜2048px × light/dark でオーバーフローなし
+- **検証**: `npm run build` で 16 ページ。Playwright(ローカル Chromium)で補完 8 件・語彙 1 件、検索 20 件とマーカー 20 個、絞り込み 20→4 件、現在地検索 20 件(入力欄の検索語を保持)、`collection.json` / GeoJSON のダウンロード(GeoJSON は 20 features)、0 件・空入力・420px 幅を確認し、console error / page error / request failed はいずれも 0。1440px / 420px とも横スクロールなし
+- **タイポチェック**: 新しい 3 ファイルを対象に文字化け(U+FFFD)・無関係な語句の混入を機械スキャンして修正。出典セクションは `openpoiapi.com/attribution.html` の実内容(由来別ライセンス表、Foursquare の NOTICE.txt 全文転記要件、PDL1.0 の加工主体記載)に合わせて書き直し、JSON サンプルは書き出しの実測値と一致させた
+
+## リリース: v0.1.2(2026-10-04)
+
+- **公開デモの追加**: `/poi-search/` — OpenPOI API をブラウザの `fetch` で直接叩く POI 検索(認証・API キー・サーバー不要)。キーワード検索 / 現在地検索 / 入力補完 / カテゴリ絞り込み / Leaflet 地図 / `collection.json` と GeoJSON の書き出し
+- **事例記事 6 本目**: `feature/poi-search-demo` — 実測した落とし穴(`center` の順序、1 文字の補完、空の住所、文字列・空文字の座標、429 の CORS 挙動、地図の二重初期化)と出典・ライセンスの条件
+- **archify 12 枚目**: `poi-search-demo.html`(workflow / showcase / 日本語 UI)。作業フォルダ `.archify/workflow-poi-search-demo-20261004-100455/`
+- **地図の初期表示**: 札幌市 `[43.0618, 141.3545]`
+- **その他**: `Layout.astro` に任意の `title` / `description` を追加、特集一覧のリード文と README 日英 2 種の記事数・図数を同期、`plan/` を削除
+- **検証**: `npm run build` 16 ページ / 全 28 URL が 200 / Playwright smoke でエラー 0

@@ -5,7 +5,7 @@
 portolan-sandbox is an experimental repository for developing ways to make the open specification "Portolan" more accessible. It aims for a setup where authentication and deployment can be handled with just a Google account, while managing the LP, concept notes, and summary articles in one place.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-v0.1.1-blue.svg)](https://github.com/watanabe3tipapa/portolan-sandbox/releases)
+[![Version](https://img.shields.io/badge/version-v0.1.2-blue.svg)](https://github.com/watanabe3tipapa/portolan-sandbox/releases)
 [![GitHub](https://img.shields.io/github/issues/watanabe3tipapa/portolan-sandbox.svg)](https://github.com/watanabe3tipapa/portolan-sandbox/issues)
 [![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-live-blue.svg)](https://watanabe3tipapa.github.io/portolan-sandbox/)
 
@@ -36,7 +36,7 @@ A sandbox is a place where you can safely experiment and play. Likewise, this re
 ## Key Features
 
 - ASTRO-based LP with automatic GitHub Pages deployment (published on every push to `main`)
-- Article content: 6 tutorials + 5 case studies
+- Article content: 6 tutorials + 6 case studies
 - archify diagrams (self-contained `.html`) embedded in all articles via iframe
 - Centralized management of ideas and plans (`DEV-MEMO.md`)
 - Aiming toward a deployment setup that can be completed with only a Google account
@@ -82,8 +82,9 @@ npm run build
 - `Portolan_要約.html` — summary of the GeoAI #16 article, "The end of the era of distributing map data"
 - `portolan-lp/` — ASTRO-based landing page
   - `src/content/tutorial/` — tutorial articles (00–05)
-  - `src/content/feature/` — case study articles (5)
-  - `public/diagrams/` — diagrams (self-contained HTML, 11)
+  - `src/content/feature/` — case study articles (6)
+  - `src/pages/poi-search.astro` — live demo (OpenPOI API search at `/poi-search/`)
+  - `public/diagrams/` — diagrams (self-contained HTML, 12)
 - `.github/workflows/deploy.yml` — GitHub Pages auto-deploy workflow
 - `README.md` / `README_en.md` — this documentation (Japanese / English)
 - `LICENSE` — MIT License
@@ -123,4 +124,4 @@ MIT License — see the [LICENSE](LICENSE) file for details.
 ## Development / Maintenance Status
 
 - The repository is not archived.
-- Last updated: 2026-09-30 (as of this document / v0.1.1)
+- Last updated: 2026-10-04 (as of this document / v0.1.2)

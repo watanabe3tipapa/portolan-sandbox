@@ -1,0 +1,225 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PoiSearch from '../components/PoiSearch.astro';
+---
+
+<Layout
+	title="OpenPOI 検索デモ — 認証なし・サーバーなしでPOIを探す | Portolan"
+	description="OpenPOI API をブラウザの fetch で直接呼ぶ POI 検索デモ。認証・APIキー・サーバーが不要で、Leaflet 地図表示と Portolan 形式の書き出しまで行えます。"
+>
+	<main class="page">
+		<nav class="breadcrumb">
+			<a href={`${import.meta.env.BASE_URL}`} class="crumb">ホーム</a>
+			<span>/</span>
+			<a href={`${import.meta.env.BASE_URL}feature/`} class="crumb">特集</a>
+			<span>/</span>
+			<a href={`${import.meta.env.BASE_URL}feature/poi-search-demo/`} class="crumb">ケーススタディ</a>
+		</nav>
+
+		<header>
+			<h1>OpenPOI 検索デモ</h1>
+			<p class="lead">
+				OpenPOI API（Overture Maps ＋ 食品営業許可・届出オープンデータ 約337万件）を、ブラウザの
+				<code>fetch</code> で直接検索します。認証・APIキー・サーバーは不要です。
+			</p>
+			<ul class="points">
+				<li>キーワード検索（<code>/v1/search</code>）</li>
+				<li>現在地から探す（<code>center=lng,lat</code> ＋ 半径）</li>
+				<li>入力補完（<code>/v1/suggest</code>）</li>
+				<li>Leaflet ＋ OpenStreetMap で地図表示</li>
+				<li>Portolan 形式で <code>collection.json</code> / GeoJSON を書き出し</li>
+			</ul>
+		</header>
+
+		<link
+			rel="stylesheet"
+			href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+			integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+			crossorigin="anonymous"
+		/>
+		<script
+			is:inline
+			src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+			integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+			crossorigin="anonymous"
+		></script>
+
+		<PoiSearch />
+
+		<section class="notes">
+			<h2>試し方</h2>
+			<p>
+				上の入力欄に <code>ラーメン</code>、<code>スターバックス</code>、<code>世田谷区 カフェ</code>
+				などを入れて「検索」を押してください。現在地から探すはブラウザの位置情報を使います（初回は許可が必要です）。
+			</p>
+
+			<h2>利用上の注意</h2>
+			<table>
+				<thead>
+					<tr>
+						<th>項目</th>
+						<th>内容</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td><code>center</code> の順序</td>
+						<td>「経度,緯度」の順。逆（<code>lat,lng</code>）だと 400 エラーになります。</td>
+					</tr>
+					<tr>
+						<td>住所が空の記録</td>
+						<td>
+							Overture Maps 由来のレコードは <code>address</code>・<code>prefecture</code> が空の場合があります。
+						</td>
+					</tr>
+					<tr>
+						<td>複数語の検索</td>
+						<td><code>/v1/search</code> は OR 検索です。近い順にするなら現在地検索を使ってください。</td>
+					</tr>
+					<tr>
+						<td>レート超過時</td>
+						<td>429 は CORS ヘッダを返さないため、ブラウザでは CORS エラーとして表示されます。</td>
+					</tr>
+				</tbody>
+			</table>
+
+			<h2>出典・ライセンス</h2>
+			<p>
+				表示しているデータの出典は <a href="https://openpoiapi.com/attribution.html" rel="noopener">OpenPOI API</a> です。
+				結果カードには各レコードの <code>source</code> と <code>licenses</code> を表示し、書き出しファイルには
+				<code>licenses</code> と <code>attributions</code> をそのまま保持しています。地図タイルは
+				&copy; OpenStreetMap contributors です。
+			</p>
+			<p>
+				実装の意図と API の実仕様は、特集コーナーの
+				<a href={`${import.meta.env.BASE_URL}feature/poi-search-demo/`}>ケーススタディ「OpenPOI API 検索デモ」</a>
+				にまとめています。
+			</p>
+		</section>
+	</main>
+</Layout>
+
+<style>
+	.page {
+		max-width: 900px;
+		margin: 0 auto;
+		padding: 3rem 1.5rem 4rem;
+	}
+
+	.breadcrumb {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+		align-items: center;
+		margin-bottom: 2rem;
+		font-weight: 700;
+	}
+
+	.crumb {
+		display: inline-block;
+		padding: 0.25rem 0.7rem;
+		background: var(--nb-bg);
+		border: var(--nb-border);
+		box-shadow: 2px 2px 0 var(--nb-ink);
+		text-decoration: none;
+		font-weight: 700;
+		transition:
+			transform 0.1s ease,
+			box-shadow 0.1s ease;
+	}
+
+	.crumb:hover {
+		transform: translate(-1px, -1px);
+		box-shadow: 3px 3px 0 var(--nb-ink);
+	}
+
+	.breadcrumb span {
+		color: var(--nb-fg-light);
+		font-weight: 400;
+	}
+
+	header h1 {
+		font-size: 2.2rem;
+		line-height: 1.35;
+		margin-bottom: 0.6rem;
+		padding-bottom: 0.5rem;
+		border-bottom: var(--nb-border);
+	}
+
+	.lead {
+		font-weight: 700;
+	}
+
+	.points {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+		list-style: none;
+		margin: 1.2rem 0 2rem;
+		padding: 0;
+	}
+
+	.points li {
+		padding: 0.35rem 0.8rem;
+		background: var(--nb-mint);
+		border: var(--nb-border);
+		font-size: 0.9rem;
+		font-weight: 700;
+	}
+
+	code {
+		font-family: "SFMono-Regular", Consolas, monospace;
+	}
+
+	.lead code,
+	.points code,
+	.notes code {
+		background: var(--nb-lavender);
+		padding: 0.1rem 0.35rem;
+		font-weight: 700;
+		font-size: 0.9em;
+	}
+
+	.notes {
+		margin-top: 3rem;
+	}
+
+	.notes h2 {
+		font-size: 1.3rem;
+		font-weight: 900;
+		margin: 2.2rem 0 0.8rem;
+		padding: 0.4rem 0.8rem;
+		background: var(--nb-mint);
+		border-left: 4px solid var(--nb-ink);
+	}
+
+	.notes table {
+		width: 100%;
+		border-collapse: collapse;
+		border: var(--nb-border);
+		box-shadow: 2px 2px 0 var(--nb-ink);
+	}
+
+	.notes th,
+	.notes td {
+		border: var(--nb-border);
+		padding: 0.5rem 0.8rem;
+		text-align: left;
+		font-size: 0.92rem;
+		vertical-align: top;
+	}
+
+	.notes th {
+		background: var(--nb-sky);
+		font-weight: 900;
+		white-space: nowrap;
+	}
+
+	.notes td {
+		background: var(--nb-bg);
+	}
+
+	.notes a {
+		font-weight: 700;
+	}
+</style>
