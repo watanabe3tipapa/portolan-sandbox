@@ -1,0 +1,187 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const base = import.meta.env.BASE_URL;
+
+// 接頭辞を省いてアクセスされた場合の誘導先
+const routes = [
+	{ path: '/poi-search/', label: 'POI 検索デモ', note: 'OpenPOI API をブラウザから直接検索' },
+	{ path: '/feature/', label: '特集', note: 'ケーススタディ 6 本' },
+	{ path: '/tutorial/', label: 'チュートリアル', note: '00〜05 の 6 本' },
+];
+---
+
+<Layout
+	title="ページが見つかりません (404) | Portolan"
+	description="このサイトは GitHub Pages のプロジェクトサイトとして公開しているため、URL は /portolan-sandbox/ を接頭辞に持ちます。"
+>
+	<main class="wrap">
+		<p class="code">404</p>
+		<h1>ページが見つかりませんでした</h1>
+		<p class="lead">
+			このサイトは GitHub Pages の<strong>プロジェクトサイト</strong>として公開しているため、すべての URL は
+			<code>/portolan-sandbox/</code> を接頭辞に持ちます。
+			<code>https://watanabe3tipapa.github.io/poi-search/</code> のように接頭辞を省くと 404 になります。
+		</p>
+
+		<section class="suggest" data-suggest hidden>
+			<h2>探していたページはこちらです</h2>
+			<p class="guess"><a data-guess-link>移動する</a></p>
+		</section>
+
+		<section class="links">
+			<h2>主なページ</h2>
+			<ul>
+				<li>
+					<a href={base}>トップ</a>
+					<span>Portolan とは・チュートリアルと特集の入口</span>
+				</li>
+				<li>
+					<a href={`${base}poi-search/`}>POI 検索デモ</a>
+					<span>OpenPOI API をブラウザから直接検索（認証・サーバー不要）</span>
+				</li>
+				<li>
+					<a href={`${base}feature/`}>特集</a>
+					<span>ケーススタディ 6 本</span>
+				</li>
+				<li>
+					<a href={`${base}tutorial/`}>チュートリアル</a>
+					<span>00〜05 の 6 本</span>
+				</li>
+				<li>
+					<a href="https://github.com/watanabe3tipapa/portolan-sandbox">GitHub リポジトリ</a>
+					<span>ソースと DEV-MEMO</span>
+				</li>
+			</ul>
+		</section>
+
+		<p class="requested">リクエストされたパス: <code data-path>（取得中）</code></p>
+	</main>
+</Layout>
+
+<script is:inline define:vars={{ base, routes }}>
+	const basePath = base.replace(/\/+$/, '');
+
+	const pathEl = document.querySelector('[data-path]');
+	if (pathEl) pathEl.textContent = window.location.pathname + window.location.search;
+
+	const current = window.location.pathname;
+	const trimmed = current.startsWith(basePath) ? current.slice(basePath.length) : current;
+
+	const normalize = (value) => (value.endsWith('/') ? value : `${value}/`);
+	const match = routes.find((route) => normalize(route.path) === normalize(trimmed));
+
+	if (match) {
+		const box = document.querySelector('[data-suggest]');
+		const link = document.querySelector('[data-guess-link]');
+		if (box && link) {
+			link.href = `${basePath}${match.path}`;
+			link.textContent = `${basePath}${match.path} — ${match.label}`;
+			box.hidden = false;
+		}
+	}
+</script>
+
+<style>
+	.wrap {
+		max-width: 760px;
+		margin: 0 auto;
+		padding: 3.5rem 1.5rem 4rem;
+	}
+
+	.code {
+		display: inline-block;
+		margin: 0 0 1rem;
+		padding: 0.2em 0.7em;
+		font-size: 1.6rem;
+		font-weight: 900;
+		background: var(--nb-pink);
+		border: var(--nb-border);
+		box-shadow: var(--nb-shadow);
+	}
+
+	h1 {
+		font-size: 2rem;
+		margin: 0 0 1rem;
+	}
+
+	.lead {
+		font-weight: 700;
+		padding: 1rem 1.2rem;
+		background: var(--nb-lemon);
+		border: var(--nb-border);
+		box-shadow: var(--nb-shadow);
+	}
+
+	code {
+		font-family: "SFMono-Regular", Consolas, monospace;
+		background: var(--nb-lavender);
+		padding: 0.1rem 0.35rem;
+		word-break: break-all;
+	}
+
+	h2 {
+		font-size: 1.2rem;
+		margin: 2.4rem 0 0.8rem;
+		padding: 0.4rem 0.8rem;
+		background: var(--nb-sky);
+		border-left: 4px solid var(--nb-ink);
+	}
+
+	.suggest {
+		margin-top: 2.2rem;
+	}
+
+	.suggest .guess a {
+		display: inline-block;
+		padding: 0.7rem 1.2rem;
+		font-weight: 700;
+		text-decoration: none;
+		background: var(--nb-mint);
+		border: var(--nb-border);
+		box-shadow: var(--nb-shadow);
+		transition:
+			transform 0.1s ease,
+			box-shadow 0.1s ease;
+	}
+
+	.suggest .guess a:hover {
+		transform: translate(-1px, -1px);
+		box-shadow: 6px 6px 0 var(--nb-ink);
+	}
+
+	.links ul {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: grid;
+		gap: 0.8rem;
+	}
+
+	.links li {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 0.25rem;
+		padding: 0.8rem 1rem;
+		background: #fff;
+		border: var(--nb-border);
+		box-shadow: 3px 3px 0 var(--nb-ink);
+	}
+
+	.links a {
+		font-weight: 700;
+	}
+
+	.links span {
+		font-size: 0.85rem;
+		color: var(--nb-fg-light);
+	}
+
+	.requested {
+		margin-top: 2.5rem;
+		font-size: 0.8rem;
+		color: var(--nb-fg-light);
+		word-break: break-all;
+	}
+</style>

@@ -86,6 +86,7 @@ npm run build
   - src/content/tutorial/ — チュートリアル記事（00〜05）
   - src/content/feature/ — 事例記事（6 本）
   - src/pages/poi-search.astro — 公開デモ（OpenPOI API 検索。`/poi-search/`）
+  - src/pages/404.astro — 404（接頭辞を省いた URL を正しいページへ誘導）
   - public/diagrams/ — 構成図（自己完結型 HTML、12 枚）
 - .github/workflows/deploy.yml — GitHub Pages 自動デプロイ用ワークフロー
 - README.md / README_en.md — 本ドキュメント（日本語・英語）

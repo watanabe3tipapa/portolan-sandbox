@@ -68,6 +68,7 @@ portolan-sandbox/                    ← GitHub Pages 公開元(リポジトリ)
     │   │   └── Layout.astro         # 日本語ヘッダ・文字セット
     │   └── pages/
     │       ├── index.astro          # LP(ヒーロー・特徴・チュートリアル・特集・CTA)
+    │       ├── 404.astro            # 404(接頭辞を省いた URL を正しい場所へ誘導)
     │       ├── poi-search.astro     # 公開デモ(/poi-search/、OpenPOI API 検索)
     │       ├── tutorial/
     │       │   ├── index.astro      # 一覧(order 順)
@@ -294,3 +295,13 @@ LP に archify 図(全 11: tutorial 6 + feature 5)を埋め込み、総点検を
 - **地図の初期表示**: 札幌市 `[43.0618, 141.3545]`
 - **その他**: `Layout.astro` に任意の `title` / `description` を追加、特集一覧のリード文と README 日英 2 種の記事数・図数を同期、`plan/` を削除
 - **検証**: `npm run build` 16 ページ / 全 28 URL が 200 / Playwright smoke でエラー 0
+
+## 対応: 404 ページを追加(接頭辞を省いた URL の誘導) — 2026-10-04
+
+`https://watanabe3tipapa.github.io/poi-search/` が 404 になる件への対応。この LP は `base: '/portolan-sandbox/'` のプロジェクトサイトなので、ドメイン直下に短い URL を作ることはできない(ドメイン直下は別の Quarto サイトが user site で公開している)。利用者が接頭辞を省いた URL を無意識にクリックしても迷わないように、GitHub Pages が配信する `404.html` を用意した。
+
+- `portolan-lp/src/pages/404.astro`(新規)— GitHub Pages が `/portolan-sandbox/404.html` を配信し、プロジェクト内の未知のパスにこのページが出る
+- 表示内容: プロジェクトサイトである旨と接頭辞の説明、主要的ページへのリンク(トップ / デモ / 特集 / チュートリアル / GitHub)、リクエストされたパス
+- 接頭辞を省いたアクセス(`/poi-search` など)を検出し、正しい URL への移動リンクを前面表示(リンク先とラベルは `define:vars` で渡し、DOM は `textContent` と属性で組み立てる)
+- 検証: ビルド 17 ページ。Playwright で `/poi-search/`・`/poi-search`(末尾スラッシュ無し)は誘導リンク表示、`/nope/` は非表示、console / page error 0、横スクロールなし
+- 制約: ドメイン直下の 404(例 `https://watanabe3tipapa.github.io/poi-search/`)は別のサイトの 404 が返るため、このページでは拾えない。正しい URL は `https://watanabe3tipapa.github.io/portolan-sandbox/poi-search/`

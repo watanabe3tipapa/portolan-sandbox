@@ -84,6 +84,7 @@ npm run build
   - `src/content/tutorial/` — tutorial articles (00–05)
   - `src/content/feature/` — case study articles (6)
   - `src/pages/poi-search.astro` — live demo (OpenPOI API search at `/poi-search/`)
+  - `src/pages/404.astro` — 404 page (guides paths missing the base prefix to the right page)
   - `public/diagrams/` — diagrams (self-contained HTML, 12)
 - `.github/workflows/deploy.yml` — GitHub Pages auto-deploy workflow
 - `README.md` / `README_en.md` — this documentation (Japanese / English)
