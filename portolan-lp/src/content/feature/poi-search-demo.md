@@ -6,7 +6,7 @@ pubDate: 2026-10-04
 
 ## 3 つの「不要」で動く検索デモ
 
-公開済みのデモは **[/poi-search/](/poi-search/)** (共有用の URL: `https://watanabe3tipapa.github.io/portolan-sandbox/poi-search/`) です。キーワードや現在地から日本の施設を探し、Leaflet で地図にプロットし、Portolan 形式で JSON を書き出せます。実装は Astro の静的ページ 1 枚と Leaflet の CDN 読み込みだけです。
+公開済みのデモは **[/poi-search/](/portolan-sandbox/poi-search/)** (共有用の URL: `https://watanabe3tipapa.github.io/portolan-sandbox/poi-search/`) です。キーワードや現在地から日本の施設を探し、Leaflet で地図にプロットし、Portolan 形式で JSON を書き出せます。実装は Astro の静的ページ 1 枚と Leaflet の CDN 読み込みだけです。
 
 この構成の意義は、**認証・API キー・サーバーという 3 つの「不要」を、Portolan の公開基盤（静的サイト + GitHub Pages）の上にそのまま載せられる**ことです。
 
